@@ -13,33 +13,33 @@ Renderer::~Renderer() {
 
 }
 
-void Renderer::drawCircle(Point center, int radius) {
-	circle(_img, center, radius, Scalar(255, 255, 255));
+void Renderer::drawCircle(Geometry::Point2Di center, int radius) {
+	circle(_img, Point(center.x, center.y), radius, Scalar(255, 255, 255));
 }
 
-void Renderer::drawLine(Point p1, Point p2) {
-	line(_img, p1, p2, Scalar(255,255,255));
+void Renderer::drawLine(Geometry::Point2Di p1, Geometry::Point2Di p2) {
+	line(_img, Point(p1.x, p1.y), Point(p2.x, p2.y), Scalar(255,255,255));
 }
 
-void Renderer::drawArrow(Point p1, Point p2) {
+void Renderer::drawArrow(Geometry::Point2Di p1, Geometry::Point2Di p2) {
 	drawLine(p1, p2);
-	drawArrowPoint(p2, Vec2d(p2.x - p1.x, p2.y - p1.y));
+	drawArrowTip(p2, Geometry::Point2Di(p2.x - p1.x, p2.y - p1.y));
 }
 
-void Renderer::drawDoubleArrow(Point p1, Point p2) {
+void Renderer::drawDoubleArrow(Geometry::Point2Di p1, Geometry::Point2Di p2) {
 	drawLine(p1, p2);
-	drawArrowPoint(p2, Vec2d(p2.x - p1.x, p2.y - p1.y));
-	drawArrowPoint(p1, Vec2d(p1.x - p2.x, p1.y - p2.y));
+	drawArrowTip(p2, Geometry::Point2Di(p2.x - p1.x, p2.y - p1.y));
+	drawArrowTip(p1, Geometry::Point2Di(p1.x - p2.x, p1.y - p2.y));
 }
 
-void Renderer::drawArrowPoint(Point p1, Vec2d direction) {
-	direction = normalize(direction);
+void Renderer::drawArrowTip(Geometry::Point2Di p1, Geometry::Point2Di directionVector) {
+	Vec2d localDirection = normalize(Vec2d(directionVector.x, directionVector.y));
 
-	Vec2d l1 = getRotated(direction, 50) * 25;
-	Vec2d l2 = getRotated(direction, -50) * 25;
+	Vec2d l1 = getRotated(localDirection, 50) * 25;
+	Vec2d l2 = getRotated(localDirection, -50) * 25;
 	
-	drawLine(p1, p1 + Point(-l1[0], -l1[1]));
-	drawLine(p1, p1 + Point(-l2[0], -l2[1]));
+	drawLine(p1, p1 + Geometry::Point2Di(-l1[0], -l1[1]));
+	drawLine(p1, p1 + Geometry::Point2Di(-l2[0], -l2[1]));
 }
 
 Vec2d Renderer::getRotated(const Vec2d &vector, float angle) const {

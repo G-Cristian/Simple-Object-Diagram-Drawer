@@ -13,12 +13,26 @@ namespace Geometry {
 		}
 
 		Point2Di operator+(const Point2Di &other) const {
-			return Point2Di(this->x + other.x, this->y + other.y);
+			return Point2Di(x + other.x, y + other.y);
+		}
+
+		Point2Di operator-() const {
+			return Point2Di(-x, -y);
+		}
+
+		Point2Di operator-(const Point2Di &other) const {
+			return *this + (-other);
+		}
+
+		Point2Di operator*(double n) const{
+			return Point2Di(x*n, y*n);
 		}
 
 		int x;
 		int y;
 	};
+
+	Point2Di operator*(double n, const Point2Di &p);
 }
 
 #endif
