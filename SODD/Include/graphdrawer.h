@@ -49,15 +49,15 @@ namespace GraphDrawer {
 		void drawGraph(const Graph &graph);
 
 	private:
-		vector<Geometry::Point2Di> calculateNodesPositions(const Graph &graph) const;
-		void actuallyDrawGraph(const Graph &graph, const vector<Geometry::Point2Di> &nodePositions);
-		void drawNodes(const Graph &graph, const vector<Geometry::Point2Di> &positions);
-		void drawEdges(const Graph &graph, const vector<Geometry::Point2Di> &positions);
-		void drawNode(const Node &node, Geometry::Point2Di position);
-		void connectNodesWithEdge(const Node &node1, Geometry::Point2Di positionNode1, const Node &node2, Geometry::Point2Di positionNode2);
-		void connectNodesWithArrow(const Node &node1, Geometry::Point2Di positionNode1, const Node &node2, Geometry::Point2Di positionNode2);
-		void connectNodesWithDoubleArrow(const Node &node1, Geometry::Point2Di positionNode1, const Node &node2, Geometry::Point2Di positionNode2);
-		pair<Geometry::Point2Di, Geometry::Point2Di> getCollitionPoints(const Node &node1, Geometry::Point2Di positionNode1, const Node &node2, Geometry::Point2Di positionNode2) const;
+		vector<Geometry::Point2D> calculateNodesPositions(const Graph &graph) const;
+		void actuallyDrawGraph(const Graph &graph, const vector<Geometry::Point2D> &nodePositions);
+		void drawNodes(const Graph &graph, const vector<Geometry::Point2D> &positions);
+		void drawEdges(const Graph &graph, const vector<Geometry::Point2D> &positions);
+		void drawNode(const Node &node, Geometry::Point2D position);
+		void connectNodesWithEdge(const Node &node1, Geometry::Point2D positionNode1, const Node &node2, Geometry::Point2D positionNode2);
+		void connectNodesWithArrow(const Node &node1, Geometry::Point2D positionNode1, const Node &node2, Geometry::Point2D positionNode2);
+		void connectNodesWithDoubleArrow(const Node &node1, Geometry::Point2D positionNode1, const Node &node2, Geometry::Point2D positionNode2);
+		pair<Geometry::Point2D, Geometry::Point2D> getCollitionPoints(const Node &node1, Geometry::Point2D positionNode1, const Node &node2, Geometry::Point2D positionNode2) const;
 		
 		Renderer & _renderer;
 	};

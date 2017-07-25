@@ -6,13 +6,13 @@
 namespace Geometry {
 	class Circle {
 	public:
-		Circle(Point2Di center, float radius):_center(center), _radius(radius){
+		Circle(Point2D center, float radius):_center(center), _radius(radius){
 		}
 		~Circle() {
 
 		}
 
-		inline Point2Di getCenter() const {
+		inline Point2D getCenter() const {
 			return _center;
 		}
 
@@ -20,7 +20,7 @@ namespace Geometry {
 			return _radius;
 		}
 	private:
-		Point2Di _center;
+		Point2D _center;
 		float _radius;
 	};
 }

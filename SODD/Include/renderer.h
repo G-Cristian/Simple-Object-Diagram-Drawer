@@ -23,11 +23,14 @@ public:
 	Renderer(Window &window);
 	~Renderer();
 
-	void drawCircle(Geometry::Point2Di center, int radius);
-	void drawLine(Geometry::Point2Di p1, Geometry::Point2Di p2);
-	void drawArrow(Geometry::Point2Di p1, Geometry::Point2Di p2);
-	void drawDoubleArrow(Geometry::Point2Di p1, Geometry::Point2Di p2);
-	void drawArrowTip(Geometry::Point2Di p1, Geometry::Point2Di directionVector);
+	void drawCircle(Geometry::Point2D center, int radius);
+	void drawLine(Geometry::Point2D p1, Geometry::Point2D p2);
+	void drawDashedLine(Geometry::Point2D p1, Geometry::Point2D p2, int linesLength = 5);
+	void drawArrow(Geometry::Point2D p1, Geometry::Point2D p2);
+	void drawDashedArrow(Geometry::Point2D p1, Geometry::Point2D p2, int linesLength = 5);
+	void drawDoubleArrow(Geometry::Point2D p1, Geometry::Point2D p2);
+	void drawDashedDoubleArrow(Geometry::Point2D p1, Geometry::Point2D p2, int linesLength = 5);
+	void drawArrowTip(Geometry::Point2D p1, Geometry::Point2D directionVector);
 
 	void show(int x, int y) const;
 	void exportToImage(const char *imageName) const;

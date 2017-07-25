@@ -2,37 +2,37 @@
 #define _POINT2D_H_
 
 namespace Geometry {
-	class Point2Di {
+	class Point2D {
 	public:
-		Point2Di(int x, int y) {
+		Point2D(double x, double y) {
 			this->x = x;
 			this->y = y;
 		}
-		~Point2Di() {
+		~Point2D() {
 
 		}
 
-		Point2Di operator+(const Point2Di &other) const {
-			return Point2Di(x + other.x, y + other.y);
+		Point2D operator+(const Point2D &other) const {
+			return Point2D(x + other.x, y + other.y);
 		}
 
-		Point2Di operator-() const {
-			return Point2Di(-x, -y);
+		Point2D operator-() const {
+			return Point2D(-x, -y);
 		}
 
-		Point2Di operator-(const Point2Di &other) const {
+		Point2D operator-(const Point2D &other) const {
 			return *this + (-other);
 		}
 
-		Point2Di operator*(double n) const{
-			return Point2Di(x*n, y*n);
+		Point2D operator*(double n) const{
+			return Point2D(x*n, y*n);
 		}
 
-		int x;
-		int y;
+		double x;
+		double y;
 	};
 
-	Point2Di operator*(double n, const Point2Di &p);
+	Point2D operator*(double n, const Point2D &p);
 }
 
 #endif

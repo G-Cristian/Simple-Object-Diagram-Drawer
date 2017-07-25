@@ -12,25 +12,25 @@ using namespace std;
 namespace Geometry {
 	class Line {
 	public:
-		Line(Point2Di p1, Point2Di p2):_p1(p1), _p2(p2) {
+		Line(Point2D p1, Point2D p2):_p1(p1), _p2(p2) {
 		}
 		~Line() {
 
 		}
 
-		inline Point2Di getPoint1() const {
+		inline Point2D getPoint1() const {
 			return _p1;
 		}
 
-		inline Point2Di getPoint2() const {
+		inline Point2D getPoint2() const {
 			return _p2;
 		}
 
 		//Precondition: There is at least one collition point.
-		Point2Di firstCollitionPointAgainstCircle(const Circle &circle) const{
+		Point2D firstCollitionPointAgainstCircle(const Circle &circle) const{
 			//I want line as _p1 + t*d
-			Point2Di d = (_p2 - _p1);
-			Point2Di v = _p1 - circle.getCenter();
+			Point2D d = (_p2 - _p1);
+			Point2D v = _p1 - circle.getCenter();
 			float r = circle.getRadius();
 
 			double a = Vec2d(d.x, d.y).dot(Vec2d(d.x, d.y));
@@ -55,8 +55,8 @@ namespace Geometry {
 			return pair<double, double>((-b + sqrRootPart) / (2 * a), (-b - sqrRootPart) / (2 * a));
 		}
 
-		Point2Di _p1;
-		Point2Di _p2;
+		Point2D _p1;
+		Point2D _p2;
 	};
 }
 

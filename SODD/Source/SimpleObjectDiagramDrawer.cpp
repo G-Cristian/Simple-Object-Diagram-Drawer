@@ -13,12 +13,12 @@ int main() {
 	
 	Renderer renderer = Renderer(window);
 	
-	/*renderer.drawCircle(Geometry::Point2Di(100, 100), 20);
-	renderer.drawLine(Geometry::Point2Di(150, 150), Geometry::Point2Di(200, 350));
-	renderer.drawArrowTip(Geometry::Point2Di(300, 300), Geometry::Point2Di(10,10));
-	renderer.drawArrow(Geometry::Point2Di(400, 400), Geometry::Point2Di(400, 200));
-	renderer.drawArrow(Geometry::Point2Di(400, 400), Geometry::Point2Di(250, 400));
-	renderer.drawDoubleArrow(Geometry::Point2Di(250, 250), Geometry::Point2Di(320, 540));
+	/*renderer.drawCircle(Geometry::Point2D(100, 100), 20);
+	renderer.drawLine(Geometry::Point2D(150, 150), Geometry::Point2D(200, 350));
+	renderer.drawArrowTip(Geometry::Point2D(300, 300), Geometry::Point2D(10,10));
+	renderer.drawArrow(Geometry::Point2D(400, 400), Geometry::Point2D(400, 200));
+	renderer.drawArrow(Geometry::Point2D(400, 400), Geometry::Point2D(250, 400));
+	renderer.drawDoubleArrow(Geometry::Point2D(250, 250), Geometry::Point2D(320, 540));
 	*/
 
 	vector<GraphDrawer::Node> nodes = vector<GraphDrawer::Node>();

@@ -57,35 +57,35 @@ namespace GraphDrawer {
 	}
 
 	void GraphDrawer::drawGraph(const Graph &graph) {
-		vector<Geometry::Point2Di> nodesPositions = calculateNodesPositions(graph);
+		vector<Geometry::Point2D> nodesPositions = calculateNodesPositions(graph);
 		actuallyDrawGraph(graph, nodesPositions);
 	}
 
-	vector<Geometry::Point2Di> GraphDrawer::calculateNodesPositions(const Graph &graph) const {
-		vector<Geometry::Point2Di> positions = vector<Geometry::Point2Di>();
+	vector<Geometry::Point2D> GraphDrawer::calculateNodesPositions(const Graph &graph) const {
+		vector<Geometry::Point2D> positions = vector<Geometry::Point2D>();
 		const vector<Node> nodes = graph.getNodes();
 		positions.reserve(nodes.size());
 
 		//TODO: replace following code with the algorithm to draw the graph
 		//This is just for testing
 		for (vector<Node>::const_iterator it = nodes.begin(); it != nodes.end(); it++) {
-			positions.push_back(Geometry::Point2Di(rand() % 600, rand() % 600));
+			positions.push_back(Geometry::Point2D(rand() % 600, rand() % 600));
 		}
-		positions[0] = Geometry::Point2Di(50,50);
-		positions[1] = Geometry::Point2Di(200, 100);
-		positions[2] = Geometry::Point2Di(100, 200);
-		positions[3] = Geometry::Point2Di(250, 200);
+		positions[0] = Geometry::Point2D(50,50);
+		positions[1] = Geometry::Point2D(200, 100);
+		positions[2] = Geometry::Point2D(100, 200);
+		positions[3] = Geometry::Point2D(250, 200);
 		
 
 		return positions;
 	}
 
-	void GraphDrawer::actuallyDrawGraph(const Graph &graph, const vector<Geometry::Point2Di> &nodePositions) {
+	void GraphDrawer::actuallyDrawGraph(const Graph &graph, const vector<Geometry::Point2D> &nodePositions) {
 		drawNodes(graph, nodePositions);
 		drawEdges(graph, nodePositions);
 	}
 
-	void GraphDrawer::drawNodes(const Graph &graph, const vector<Geometry::Point2Di> &positions) {
+	void GraphDrawer::drawNodes(const Graph &graph, const vector<Geometry::Point2D> &positions) {
 		const vector<Node> nodes = graph.getNodes();
 		int n = nodes.size();
 
@@ -94,7 +94,7 @@ namespace GraphDrawer {
 		}
 	}
 
-	void GraphDrawer::drawEdges(const Graph &graph, const vector<Geometry::Point2Di> &positions) {
+	void GraphDrawer::drawEdges(const Graph &graph, const vector<Geometry::Point2D> &positions) {
 		const vector<Node> nodes = graph.getNodes();
 		const vector<list<int> > edges = graph.getEdges();
 		const matrix_b adjacencyMatrix = graph.getAdjacencyMatrix();
@@ -126,31 +126,31 @@ namespace GraphDrawer {
 		}
 	}
 
-	void GraphDrawer::drawNode(const Node &node, Geometry::Point2Di position) {
+	void GraphDrawer::drawNode(const Node &node, Geometry::Point2D position) {
 		_renderer.drawCircle(position, node.getRadius());
 	}
 
-	void GraphDrawer::connectNodesWithEdge(const Node &node1, Geometry::Point2Di positionNode1, const Node &node2, Geometry::Point2Di positionNode2) {
-		pair<Geometry::Point2Di, Geometry::Point2Di> connectionPoints = getCollitionPoints(node1, positionNode1, node2, positionNode2);
+	void GraphDrawer::connectNodesWithEdge(const Node &node1, Geometry::Point2D positionNode1, const Node &node2, Geometry::Point2D positionNode2) {
+		pair<Geometry::Point2D, Geometry::Point2D> connectionPoints = getCollitionPoints(node1, positionNode1, node2, positionNode2);
 		_renderer.drawLine(connectionPoints.first, connectionPoints.second);
 	}
 
-	void GraphDrawer::connectNodesWithArrow(const Node &node1, Geometry::Point2Di positionNode1, const Node &node2, Geometry::Point2Di positionNode2) {
-		pair<Geometry::Point2Di, Geometry::Point2Di> connectionPoints = getCollitionPoints(node1, positionNode1, node2, positionNode2);
+	void GraphDrawer::connectNodesWithArrow(const Node &node1, Geometry::Point2D positionNode1, const Node &node2, Geometry::Point2D positionNode2) {
+		pair<Geometry::Point2D, Geometry::Point2D> connectionPoints = getCollitionPoints(node1, positionNode1, node2, positionNode2);
 		_renderer.drawArrow(connectionPoints.first, connectionPoints.second);
 	}
 
-	void GraphDrawer::connectNodesWithDoubleArrow(const Node &node1, Geometry::Point2Di positionNode1, const Node &node2, Geometry::Point2Di positionNode2) {
-		pair<Geometry::Point2Di, Geometry::Point2Di> connectionPoints = getCollitionPoints(node1, positionNode1, node2, positionNode2);
+	void GraphDrawer::connectNodesWithDoubleArrow(const Node &node1, Geometry::Point2D positionNode1, const Node &node2, Geometry::Point2D positionNode2) {
+		pair<Geometry::Point2D, Geometry::Point2D> connectionPoints = getCollitionPoints(node1, positionNode1, node2, positionNode2);
 		_renderer.drawDoubleArrow(connectionPoints.first, connectionPoints.second);
 	}
 
-	pair<Geometry::Point2Di, Geometry::Point2Di> GraphDrawer::getCollitionPoints(const Node &node1, Geometry::Point2Di positionNode1, const Node &node2, Geometry::Point2Di positionNode2) const {
+	pair<Geometry::Point2D, Geometry::Point2D> GraphDrawer::getCollitionPoints(const Node &node1, Geometry::Point2D positionNode1, const Node &node2, Geometry::Point2D positionNode2) const {
 		Line lineFromNode1ToNode2 = Line(positionNode1, positionNode2);
-		Geometry::Point2Di collitionPointInNode2 = lineFromNode1ToNode2.firstCollitionPointAgainstCircle(Circle(positionNode2, node2.getRadius()));
+		Geometry::Point2D collitionPointInNode2 = lineFromNode1ToNode2.firstCollitionPointAgainstCircle(Circle(positionNode2, node2.getRadius()));
 		Line lineFromNode2ToNode1 = Line(positionNode2, positionNode1);
-		Geometry::Point2Di collitionPointInNode1 = lineFromNode2ToNode1.firstCollitionPointAgainstCircle(Circle(positionNode1, node1.getRadius()));
+		Geometry::Point2D collitionPointInNode1 = lineFromNode2ToNode1.firstCollitionPointAgainstCircle(Circle(positionNode1, node1.getRadius()));
 
-		return pair<Geometry::Point2Di, Geometry::Point2Di>(collitionPointInNode1, collitionPointInNode2);
+		return pair<Geometry::Point2D, Geometry::Point2D>(collitionPointInNode1, collitionPointInNode2);
 	}
 }
