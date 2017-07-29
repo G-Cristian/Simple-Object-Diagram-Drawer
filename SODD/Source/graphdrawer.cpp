@@ -26,10 +26,10 @@ namespace GraphDrawer {
 		return _text;
 	}
 
-	Graph::Graph(const vector<Node> &nodes, const vector<list<int> > &edges, const matrix_b &adjacencyMatrix) {
+	Graph::Graph(const vector<Node> &nodes, const ConnectivityMatrix &connectivityMatrix):_connectivityMatrix(connectivityMatrix) {
+		//TODO : Assert nodes.size() == connectivityMatrix.getNodeCounts(), or throw exception otherwise.
 		_nodes = nodes;
-		_edges = edges;
-		_adjacencyMatrix = adjacencyMatrix;
+		_edges = _connectivityMatrix.toAdjacencyList();
 	}
 
 	Graph::~Graph(){
@@ -44,8 +44,8 @@ namespace GraphDrawer {
 		return _edges;
 	}
 
-	const matrix_b & Graph::getAdjacencyMatrix() const {
-		return _adjacencyMatrix;
+	const ConnectivityMatrix & Graph::getConnectivityMatrix() const {
+		return _connectivityMatrix;
 	}
 
 	GraphDrawer::GraphDrawer(Renderer &rendererToDrawTo)
@@ -94,10 +94,14 @@ namespace GraphDrawer {
 		}
 	}
 
+	void GraphDrawer::drawNode(const Node &node, Geometry::Point2D position) {
+		_renderer.drawCircle(position, node.getRadius());
+	}
+
 	void GraphDrawer::drawEdges(const Graph &graph, const vector<Geometry::Point2D> &positions) {
 		const vector<Node> nodes = graph.getNodes();
 		const vector<list<int> > edges = graph.getEdges();
-		const matrix_b adjacencyMatrix = graph.getAdjacencyMatrix();
+		const ConnectivityMatrix connectivityMatrix = graph.getConnectivityMatrix();
 		int n = nodes.size();
 		vector<bool> alreadyChecked = vector<bool>(n, false);
 		
@@ -108,17 +112,8 @@ namespace GraphDrawer {
 				int otherNode = *it;
 
 				if (!alreadyChecked[otherNode]) {
-					if (adjacencyMatrix[currentNode][otherNode]) {
-						if (adjacencyMatrix[otherNode][currentNode]) {
-							connectNodesWithDoubleArrow(nodes[currentNode], positions[currentNode], nodes[otherNode], positions[otherNode]);
-						}
-						else {
-							connectNodesWithArrow(nodes[currentNode], positions[currentNode], nodes[otherNode], positions[otherNode]);
-						}
-					}
-					else if (adjacencyMatrix[otherNode][currentNode]) {
-						connectNodesWithArrow(nodes[otherNode], positions[otherNode], nodes[currentNode], positions[currentNode]);
-					}
+					list<ConnectionDrawingAlgorithm*> connectionDrawingAlgorithms = connectivityMatrix.getConnectionAlgorithmsBetweenNodes(currentNode, otherNode);
+					drawConnectivity(nodes[currentNode], positions[currentNode], nodes[otherNode], positions[otherNode], connectionDrawingAlgorithms);
 				}
 			}
 
@@ -126,30 +121,35 @@ namespace GraphDrawer {
 		}
 	}
 
-	void GraphDrawer::drawNode(const Node &node, Geometry::Point2D position) {
-		_renderer.drawCircle(position, node.getRadius());
+	void GraphDrawer::drawConnectivity(const Node &node1, Geometry::Point2D positionNode1, const Node &node2, Geometry::Point2D positionNode2, list<ConnectionDrawingAlgorithm*> &connectivities) {
+		int numberOfArrows = connectivities.size();
+		float minimumRadius = min(node1.getRadius(), node2.getRadius());
+		
+		Geometry::Point2D diffPositions = positionNode2 - positionNode1;
+
+		Vec2d auxVector = normalize(Vec2d(diffPositions.y, -diffPositions.x));
+		Geometry::Point2D orthogonalVectorToVectorFromNode1ToNode2 = Geometry::Point2D(auxVector[0], auxVector[1]);
+		
+		Geometry::Line lineFromCircumferenceOfNodeWithMinimunRadiusToOtherNode = Line(	positionNode1 + orthogonalVectorToVectorFromNode1ToNode2*minimumRadius,
+																						positionNode2 + orthogonalVectorToVectorFromNode1ToNode2*minimumRadius);
+		
+		float circlePartition = (minimumRadius * 2) / (numberOfArrows + 1);
+
+		for (int i = 1; i < numberOfArrows+1; i++) {
+			Geometry::Line ray = Geometry::Line(lineFromCircumferenceOfNodeWithMinimunRadiusToOtherNode.getPoint1() - orthogonalVectorToVectorFromNode1ToNode2 * (i * circlePartition),
+												lineFromCircumferenceOfNodeWithMinimunRadiusToOtherNode.getPoint2() - orthogonalVectorToVectorFromNode1ToNode2 * (i * circlePartition));
+
+			pair<Geometry::Point2D, Geometry::Point2D> collitionPoints = getCollitionPoints(node1, positionNode1, node2, positionNode2, ray);
+
+			connectivities.front()->drawConnection(_renderer, collitionPoints.first, collitionPoints.second);
+			delete connectivities.front();
+			connectivities.pop_front();
+		}
 	}
 
-	void GraphDrawer::connectNodesWithEdge(const Node &node1, Geometry::Point2D positionNode1, const Node &node2, Geometry::Point2D positionNode2) {
-		pair<Geometry::Point2D, Geometry::Point2D> connectionPoints = getCollitionPoints(node1, positionNode1, node2, positionNode2);
-		_renderer.drawLine(connectionPoints.first, connectionPoints.second);
-	}
-
-	void GraphDrawer::connectNodesWithArrow(const Node &node1, Geometry::Point2D positionNode1, const Node &node2, Geometry::Point2D positionNode2) {
-		pair<Geometry::Point2D, Geometry::Point2D> connectionPoints = getCollitionPoints(node1, positionNode1, node2, positionNode2);
-		_renderer.drawArrow(connectionPoints.first, connectionPoints.second);
-	}
-
-	void GraphDrawer::connectNodesWithDoubleArrow(const Node &node1, Geometry::Point2D positionNode1, const Node &node2, Geometry::Point2D positionNode2) {
-		pair<Geometry::Point2D, Geometry::Point2D> connectionPoints = getCollitionPoints(node1, positionNode1, node2, positionNode2);
-		_renderer.drawDoubleArrow(connectionPoints.first, connectionPoints.second);
-	}
-
-	pair<Geometry::Point2D, Geometry::Point2D> GraphDrawer::getCollitionPoints(const Node &node1, Geometry::Point2D positionNode1, const Node &node2, Geometry::Point2D positionNode2) const {
-		Line lineFromNode1ToNode2 = Line(positionNode1, positionNode2);
-		Geometry::Point2D collitionPointInNode2 = lineFromNode1ToNode2.firstCollitionPointAgainstCircle(Circle(positionNode2, node2.getRadius()));
-		Line lineFromNode2ToNode1 = Line(positionNode2, positionNode1);
-		Geometry::Point2D collitionPointInNode1 = lineFromNode2ToNode1.firstCollitionPointAgainstCircle(Circle(positionNode1, node1.getRadius()));
+	pair<Geometry::Point2D, Geometry::Point2D> GraphDrawer::getCollitionPoints(const Node &node1, Geometry::Point2D positionNode1, const Node &node2, Geometry::Point2D positionNode2, const Line &ray) const {
+		Geometry::Point2D collitionPointInNode2 = ray.firstCollitionPointAgainstCircle(Circle(positionNode2, node2.getRadius()));
+		Geometry::Point2D collitionPointInNode1 = ray.reversed().firstCollitionPointAgainstCircle(Circle(positionNode1, node1.getRadius()));
 
 		return pair<Geometry::Point2D, Geometry::Point2D>(collitionPointInNode1, collitionPointInNode2);
 	}
