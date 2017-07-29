@@ -47,6 +47,10 @@ namespace Geometry {
 			}
 		}
 
+		Line reversed() const{
+			return Line(_p2, _p1);
+		}
+
 	private:
 		//Precondition: It has at least one real solution
 		pair<double, double> solveQuadraticEquation(double a, double b, double c) const{
