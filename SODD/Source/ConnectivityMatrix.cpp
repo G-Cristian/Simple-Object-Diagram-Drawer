@@ -29,32 +29,44 @@ void ConnectivityMatrix::setDashedArrowBetweenNodes(int node1, int node2) {
 list<ConnectionDrawingAlgorithm*> ConnectivityMatrix::getConnectionAlgorithmsBetweenNodes(int node1, int node2) const {
 	list<ConnectionDrawingAlgorithm*> connectionDrawingAlgorithms = list<ConnectionDrawingAlgorithm*>();
 	//check for arrows connections
-	if (_matrix[node1][node2] & 2 == 2) {
-		if (_matrix[node2][node1] & 2 == 2) {
+	if (hasArrow(node1, node2)) {
+		if (hasArrow(node2, node1)) {
 			connectionDrawingAlgorithms.push_back(new DoubleArrowDrawingAlgorithm());
 		}
 		else {
 			connectionDrawingAlgorithms.push_back(new ArrowDrawingAlgorithm());
 		}
 	}
-	else if (_matrix[node2][node1] & 2 == 2) {
+	else if (hasArrow(node2, node1)) {
 		connectionDrawingAlgorithms.push_back(new ReversedArrowDrawingAlgorithm());
 	}
 
 	//Also check for dashed arrows connections
-	if (_matrix[node1][node2] & 4 == 4) {
-		if (_matrix[node2][node1] & 4 == 4) {
+	if (hasDashedArrow(node1, node2)) {
+		if (hasDashedArrow(node2, node1)) {
 			connectionDrawingAlgorithms.push_back(new DashedDoubleArrowDrawingAlgorithm());
 		}
 		else {
 			connectionDrawingAlgorithms.push_back(new DashedArrowDrawingAlgorithm());
 		}
 	}
-	else if (_matrix[node2][node1] & 4 == 4) {
+	else if (hasDashedArrow(node2, node1)) {
 		connectionDrawingAlgorithms.push_back(new ReversedDashedArrowDrawingAlgorithm());
 	}
 
 	return connectionDrawingAlgorithms;
+}
+
+bool ConnectivityMatrix::hasConnection(int node1, int node2) const {
+	return (_matrix[node1][node2] & 1) == 1;
+}
+
+bool ConnectivityMatrix::hasArrow(int node1, int node2) const {
+	return (_matrix[node1][node2] & 2) == 2;
+}
+
+bool ConnectivityMatrix::hasDashedArrow(int node1, int node2) const {
+	return (_matrix[node1][node2] & 4) == 4;
 }
 
 vector<list<int> > ConnectivityMatrix::toAdjacencyList()const {
@@ -68,4 +80,8 @@ vector<list<int> > ConnectivityMatrix::toAdjacencyList()const {
 	}
 
 	return adjacencyList;
+}
+
+int ConnectivityMatrix::getNodeCounts() const {
+	return _nodesCount;
 }
