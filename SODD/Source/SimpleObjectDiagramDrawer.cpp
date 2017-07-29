@@ -1,5 +1,6 @@
 #include "../Include/includes.h"
 #include "../Include/Point2D.h"
+#include "../Include/ConnectivityMatrix.h"
 #include <vector>
 #include <list>
 
@@ -28,53 +29,23 @@ int main() {
 	nodes.push_back(GraphDrawer::Node(30));
 	nodes.push_back(GraphDrawer::Node(40));
 
-	vector<list<int> > edges = vector<list<int> >();
-	list<int> adjLst = list<int>();
-	adjLst.push_back(1);
-	adjLst.push_back(2);
-	adjLst.push_back(3);
-	edges.push_back(adjLst);
+	ConnectivityMatrix connectivityMatrix = ConnectivityMatrix(4);
+	connectivityMatrix.setArrowBetweenNodes(0, 1);
+	connectivityMatrix.setArrowBetweenNodes(0, 2);
 
-	adjLst = list<int>();
-	adjLst.push_back(0);
-	adjLst.push_back(2);
-	edges.push_back(adjLst);
+	connectivityMatrix.setArrowBetweenNodes(1, 2);
+	connectivityMatrix.setDashedArrowBetweenNodes(1, 3);
 
-	adjLst = list<int>();
-	adjLst.push_back(0);
-	adjLst.push_back(1);
-	adjLst.push_back(3);
-	edges.push_back(adjLst);
+	connectivityMatrix.setArrowBetweenNodes(2, 0);
+	connectivityMatrix.setArrowBetweenNodes(2, 1);
+	connectivityMatrix.setDashedArrowBetweenNodes(1, 2);
 
-	adjLst = list<int>();
-	adjLst.push_back(0);
-	adjLst.push_back(2);
-	edges.push_back(adjLst);
-
-	GraphDrawer::matrix_b adjacencyMatrix = vector<vector<bool> >(nodes.size());
-	vector<bool> row = vector<bool>(nodes.size(), false);
-	row[1] = true;
-	row[2] = true;
-	row[3] = false;
-	adjacencyMatrix[0] = row;
-
-	row = vector<bool>(nodes.size(), false);
-	row[0] = false;
-	row[2] = true;
-	adjacencyMatrix[1] = row;
-
-	row = vector<bool>(nodes.size(), false);
-	row[0] = true;
-	row[1] = true;
-	row[3] = false;
-	adjacencyMatrix[2] = row;
-
-	row = vector<bool>(nodes.size(), false);
-	row[0] = true;
-	row[2] = true;
-	adjacencyMatrix[3] = row;
+	connectivityMatrix.setArrowBetweenNodes(3, 0);
+	connectivityMatrix.setArrowBetweenNodes(3, 2);
+	connectivityMatrix.setDashedArrowBetweenNodes(3, 1);
+	connectivityMatrix.setDashedArrowBetweenNodes(3, 2);
 	
-	GraphDrawer::Graph graph = GraphDrawer::Graph(nodes, edges, adjacencyMatrix);
+	GraphDrawer::Graph graph = GraphDrawer::Graph(nodes, connectivityMatrix);
 	GraphDrawer::GraphDrawer gd = GraphDrawer::GraphDrawer(renderer);
 	gd.drawGraph(graph);
 
