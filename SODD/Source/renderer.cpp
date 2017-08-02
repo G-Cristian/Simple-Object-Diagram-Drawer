@@ -13,6 +13,13 @@ Renderer::~Renderer() {
 
 }
 
+void Renderer::resizeWindow(int width, int height) {
+	_window.width = width;
+	_window.height = height;
+
+	resize(_img, _img, Size(width, height));
+}
+
 void Renderer::drawCircle(Geometry::Point2D center, int radius) {
 	circle(_img, Point(center.x, center.y), radius, Scalar(255, 255, 255));
 }

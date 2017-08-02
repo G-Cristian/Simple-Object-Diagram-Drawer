@@ -23,6 +23,8 @@ public:
 	Renderer(Window &window);
 	~Renderer();
 
+	void resizeWindow(int width, int height);
+
 	void drawCircle(Geometry::Point2D center, int radius);
 	void drawLine(Geometry::Point2D p1, Geometry::Point2D p2);
 	void drawDashedLine(Geometry::Point2D p1, Geometry::Point2D p2, int linesLength = 5);
