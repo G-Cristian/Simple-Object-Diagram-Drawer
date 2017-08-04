@@ -74,7 +74,7 @@ namespace GraphDrawer {
 		positions[0] = Geometry::Point2D(50,50);
 		positions[1] = Geometry::Point2D(200, 100);
 		positions[2] = Geometry::Point2D(100, 200);
-		positions[3] = Geometry::Point2D(250, 200);
+		positions[3] = Geometry::Point2D(450, 450);
 		
 
 		return positions;
