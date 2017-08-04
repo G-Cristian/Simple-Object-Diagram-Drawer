@@ -80,7 +80,7 @@ void Renderer::drawArrowTip(Geometry::Point2D p1, Geometry::Point2D directionVec
 	drawLine(p1, p1 + Geometry::Point2D(-l2[0], -l2[1]));
 }
 //'boundingOffsetPerLineOfText' will be scaled.
-void Renderer::drawTextCenteredInBoundingCircle(string text, const Geometry::Circle &circle, double boundingOffsetPerLineOfText) {
+void Renderer::drawTextCenteredInBoundingCircle(const string &text, const Geometry::Circle &circle, double boundingOffsetPerLineOfText) {
 	//TODO: Remove debug code
 	vector<string> linesInText = splitStringByDelimiter(text, "\n");
 	Geometry::Rectangle boundingRectangle = getBoundingRectangle(linesInText, boundingOffsetPerLineOfText);

@@ -27,7 +27,7 @@ int main() {
 	nodes.push_back(GraphDrawer::Node(10));
 	nodes.push_back(GraphDrawer::Node(20));
 	nodes.push_back(GraphDrawer::Node(30));
-	nodes.push_back(GraphDrawer::Node(160));
+	nodes.push_back(GraphDrawer::Node(160, "ObjectDrawerForGraphsNodes\nAndObjectDrawerForGraphEdges\nAnd Stuff\nTesting Multilines\nAnd one last line"));
 
 	ConnectivityMatrix connectivityMatrix = ConnectivityMatrix(4);
 	connectivityMatrix.setArrowBetweenNodes(0, 1);
@@ -50,7 +50,7 @@ int main() {
 	gd.drawGraph(graph);
 
 	//renderer.drawTextCenteredInBoundingCircle("Casa\nGrande\Moco\nLoco", Circle(Point2D(450, 450), 160),0);
-	renderer.drawTextCenteredInBoundingCircle("ObjectDrawerForGraphsNodes\nAndObjectDrawerForGraphEdges\nAnd Stuff\nTesting Multilines\nAnd one last line", Circle(Point2D(450, 450), 160), 30);
+	//renderer.drawTextCenteredInBoundingCircle("ObjectDrawerForGraphsNodes\nAndObjectDrawerForGraphEdges\nAnd Stuff\nTesting Multilines\nAnd one last line", Circle(Point2D(450, 450), 160), 5);
 	//renderer.drawTextCenteredInBoundingCircle("A\nA\nA\nA\nA\nA\nA\nA\nA\nA\nA\nA\nA\nA\nA", Circle(Point2D(450, 450), 160),0);
 	//renderer.drawTextCenteredInBoundingCircle("A", Circle(Point2D(450, 450), 160),0);
 	renderer.show(100, 100);

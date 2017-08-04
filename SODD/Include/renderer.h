@@ -37,7 +37,7 @@ public:
 	void drawDashedDoubleArrow(Geometry::Point2D p1, Geometry::Point2D p2, int linesLength = 5);
 	void drawArrowTip(Geometry::Point2D p1, Geometry::Point2D directionVector);
 	//'boundingOffsetPerLineOfText' will be scaled.
-	void drawTextCenteredInBoundingCircle(string text, const Geometry::Circle &circle, double boundingOffsetPerLineOfText);
+	void drawTextCenteredInBoundingCircle(const string &text, const Geometry::Circle &circle, double boundingOffsetPerLineOfText);
 
 	void show(int x, int y) const;
 	void exportToImage(const char *imageName) const;

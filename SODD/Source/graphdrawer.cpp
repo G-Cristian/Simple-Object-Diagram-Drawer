@@ -96,6 +96,7 @@ namespace GraphDrawer {
 
 	void GraphDrawer::drawNode(const Node &node, Geometry::Point2D position) {
 		_renderer.drawCircle(position, node.getRadius());
+		_renderer.drawTextCenteredInBoundingCircle(node.getText(), Circle(position, node.getRadius()), 5);
 	}
 
 	void GraphDrawer::drawEdges(const Graph &graph, const vector<Geometry::Point2D> &positions) {
