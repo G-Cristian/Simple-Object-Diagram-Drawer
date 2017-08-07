@@ -24,26 +24,36 @@ int main() {
 
 	vector<GraphDrawer::Node> nodes = vector<GraphDrawer::Node>();
 
-	nodes.push_back(GraphDrawer::Node(10));
-	nodes.push_back(GraphDrawer::Node(20));
-	nodes.push_back(GraphDrawer::Node(30));
-	nodes.push_back(GraphDrawer::Node(160, "ObjectDrawerForGraphsNodes\nAndObjectDrawerForGraphEdges\nAnd Stuff\nTesting Multilines\nAnd one last line"));
+	nodes.push_back(GraphDrawer::Node(50, "Renderer"));
+	nodes.push_back(GraphDrawer::Node(50, "Circle"));
+	nodes.push_back(GraphDrawer::Node(20, "Point2D"));
+	nodes.push_back(GraphDrawer::Node(50, "GraphDrawer"));
+	nodes.push_back(GraphDrawer::Node(50, "Graph"));
+	nodes.push_back(GraphDrawer::Node(80, "Lista de Nodos"));
+	nodes.push_back(GraphDrawer::Node(50, "Rectangle"));
+	nodes.push_back(GraphDrawer::Node(30, "Line"));
+	nodes.push_back(GraphDrawer::Node(30, "Punto 1"));
+	nodes.push_back(GraphDrawer::Node(30, "Punto 2"));
 
-	ConnectivityMatrix connectivityMatrix = ConnectivityMatrix(4);
-	connectivityMatrix.setArrowBetweenNodes(0, 1);
-	connectivityMatrix.setArrowBetweenNodes(0, 2);
+	ConnectivityMatrix connectivityMatrix = ConnectivityMatrix(10);
+	connectivityMatrix.setDashedArrowBetweenNodes(0, 1);
+	connectivityMatrix.setDashedArrowBetweenNodes(0, 2);
+	connectivityMatrix.setDashedArrowBetweenNodes(0, 4);
+	connectivityMatrix.setDashedArrowBetweenNodes(0, 6);
 
-	connectivityMatrix.setArrowBetweenNodes(1, 2);
 	connectivityMatrix.setDashedArrowBetweenNodes(1, 3);
 
-	connectivityMatrix.setArrowBetweenNodes(2, 0);
-	connectivityMatrix.setArrowBetweenNodes(2, 1);
-	connectivityMatrix.setDashedArrowBetweenNodes(1, 2);
-
 	connectivityMatrix.setArrowBetweenNodes(3, 0);
-	connectivityMatrix.setArrowBetweenNodes(3, 2);
-	connectivityMatrix.setDashedArrowBetweenNodes(3, 1);
-	connectivityMatrix.setDashedArrowBetweenNodes(3, 2);
+	connectivityMatrix.setDashedArrowBetweenNodes(3, 4);
+
+	connectivityMatrix.setArrowBetweenNodes(4, 5);
+
+	connectivityMatrix.setArrowBetweenNodes(6, 2);
+
+	connectivityMatrix.setArrowBetweenNodes(7, 8);
+	connectivityMatrix.setArrowBetweenNodes(7, 9);
+	
+	
 	
 	GraphDrawer::Graph graph = GraphDrawer::Graph(nodes, connectivityMatrix);
 	GraphDrawer::GraphDrawer gd = GraphDrawer::GraphDrawer(renderer);
@@ -53,7 +63,7 @@ int main() {
 	//renderer.drawTextCenteredInBoundingCircle("ObjectDrawerForGraphsNodes\nAndObjectDrawerForGraphEdges\nAnd Stuff\nTesting Multilines\nAnd one last line", Circle(Point2D(450, 450), 160), 5);
 	//renderer.drawTextCenteredInBoundingCircle("A\nA\nA\nA\nA\nA\nA\nA\nA\nA\nA\nA\nA\nA\nA", Circle(Point2D(450, 450), 160),0);
 	//renderer.drawTextCenteredInBoundingCircle("A", Circle(Point2D(450, 450), 160),0);
-	renderer.show(100, 100);
+	renderer.show(0, 0);
 	
 	waitKey();
 

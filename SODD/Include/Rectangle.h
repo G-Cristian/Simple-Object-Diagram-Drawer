@@ -45,6 +45,10 @@ namespace Geometry {
 			return _top + _height;
 		}
 
+		inline double area() const {
+			return _width * _height;
+		}
+
 		void scaleToBoundingCircle(const Circle &circle) {
 			Vec2d normalVectorFromCenterToTopLeftCorner = cv::normalize(Vec2d(_width * 0.5, _height * 0.5));
 			Point2D topRightCorner = Point2D(normalVectorFromCenterToTopLeftCorner[0], normalVectorFromCenterToTopLeftCorner[1]) * circle.getRadius();

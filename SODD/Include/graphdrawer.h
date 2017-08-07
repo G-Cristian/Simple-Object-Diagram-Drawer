@@ -8,6 +8,7 @@
 #include "renderer.h"
 #include "Point2D.h"
 #include "Line.h"
+#include "Rectangle.h"
 #include "ConnectivityMatrix.h"
 #include "ConnectionDrawingAlgorithms.h"
 
@@ -51,6 +52,16 @@ namespace GraphDrawer {
 
 	private:
 		vector<Geometry::Point2D> calculateNodesPositions(const Graph &graph) const;
+		Geometry::Rectangle getGraphBoundingRectangle(const Graph &graph) const;
+		float summatoryRadius(const Graph &graph) const;
+		vector<Geometry::Point2D> nodesPositionsInsideRectangle(const Graph &graph, const Geometry::Rectangle &rectangle)const;
+		vector<Geometry::Point2D> randomPositionsInsideRectangle(const Graph &graph, const Geometry::Rectangle &rectangle)const;
+		void calculateDisplacements(const Graph &graph, const vector<Geometry::Point2D> &positions, const Geometry::Rectangle &boundingRectangle, vector<Geometry::Point2D> &outDisplacements)const;
+		void addRepulsiveDisplacementsToDisplacements(const Graph &graph, const vector<Geometry::Point2D> &positions, const Geometry::Rectangle &boundingRectangle, vector<Geometry::Point2D> &outDisplacements)const;
+		void addAttractiveDisplacementsToDisplacements(const Graph &graph, const vector<Geometry::Point2D> &positions, const Geometry::Rectangle &boundingRectangle, vector<Geometry::Point2D> &outDisplacements)const;
+		void moveVertices(const vector<Geometry::Point2D> &displacements, const Geometry::Rectangle &boundingRectangle, vector<Geometry::Point2D> &outPositions) const;
+		Geometry::Rectangle getMinimumBoundingRectangle(const Graph &graph, const vector<Geometry::Point2D> &positions) const;
+		void offsetGraph(const Point2D &offset, vector<Geometry::Point2D> &outPositions) const;
 		void actuallyDrawGraph(const Graph &graph, const vector<Geometry::Point2D> &nodePositions);
 		void drawNodes(const Graph &graph, const vector<Geometry::Point2D> &positions);
 		void drawNode(const Node &node, Geometry::Point2D position);

@@ -28,6 +28,10 @@ namespace Geometry {
 			return Point2D(x*n, y*n);
 		}
 
+		Point2D operator/(double n) const {
+			return Point2D(x/n, y/n);
+		}
+
 		double x;
 		double y;
 	};
