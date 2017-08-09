@@ -14,7 +14,7 @@
 
 using namespace std;
 
-namespace GraphDrawer {
+namespace gd {
 	class Node {
 	public:
 		Node(float radius);

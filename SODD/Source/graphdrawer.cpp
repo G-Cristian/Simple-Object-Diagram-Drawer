@@ -14,7 +14,7 @@ using Geometry::Circle;
 using Geometry::Rectangle;
 using namespace std;
 
-namespace GraphDrawer {
+namespace gd {
 	Node::Node(float radius):Node(radius, "") {
 	}
 

@@ -22,18 +22,18 @@ int main() {
 	renderer.drawDoubleArrow(Geometry::Point2D(250, 250), Geometry::Point2D(320, 540));
 	*/
 
-	vector<GraphDrawer::Node> nodes = vector<GraphDrawer::Node>();
+	vector<gd::Node> nodes = vector<gd::Node>();
 
-	nodes.push_back(GraphDrawer::Node(50, "Renderer"));
-	nodes.push_back(GraphDrawer::Node(50, "Circle"));
-	nodes.push_back(GraphDrawer::Node(20, "Point2D"));
-	nodes.push_back(GraphDrawer::Node(50, "GraphDrawer"));
-	nodes.push_back(GraphDrawer::Node(50, "Graph"));
-	nodes.push_back(GraphDrawer::Node(80, "Lista de Nodos"));
-	nodes.push_back(GraphDrawer::Node(50, "Rectangle"));
-	nodes.push_back(GraphDrawer::Node(30, "Line"));
-	nodes.push_back(GraphDrawer::Node(30, "Punto 1"));
-	nodes.push_back(GraphDrawer::Node(30, "Punto 2"));
+	nodes.push_back(gd::Node(50, "Renderer"));
+	nodes.push_back(gd::Node(50, "Circle"));
+	nodes.push_back(gd::Node(20, "Point2D"));
+	nodes.push_back(gd::Node(50, "GraphDrawer"));
+	nodes.push_back(gd::Node(50, "Graph"));
+	nodes.push_back(gd::Node(80, "Lista de Nodos"));
+	nodes.push_back(gd::Node(50, "Rectangle"));
+	nodes.push_back(gd::Node(30, "Line"));
+	nodes.push_back(gd::Node(30, "Punto 1"));
+	nodes.push_back(gd::Node(30, "Punto 2"));
 
 	ConnectivityMatrix connectivityMatrix = ConnectivityMatrix(10);
 	connectivityMatrix.setDashedArrowBetweenNodes(0, 1);
@@ -55,8 +55,8 @@ int main() {
 	
 	
 	
-	GraphDrawer::Graph graph = GraphDrawer::Graph(nodes, connectivityMatrix);
-	GraphDrawer::GraphDrawer gd = GraphDrawer::GraphDrawer(renderer);
+	gd::Graph graph = gd::Graph(nodes, connectivityMatrix);
+	gd::GraphDrawer gd = gd::GraphDrawer(renderer);
 	gd.drawGraph(graph);
 
 	//renderer.drawTextCenteredInBoundingCircle("Casa\nGrande\Moco\nLoco", Circle(Point2D(450, 450), 160),0);
