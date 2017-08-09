@@ -68,8 +68,8 @@ namespace gd {
 	void GraphDrawer::drawGraph(const Graph &graph) {
 		vector<Geometry::Point2D> nodesPositions = calculateNodesPositions(graph);
 		Geometry::Rectangle boundingRectangle = getMinimumBoundingRectangle(graph, nodesPositions);
-		_renderer.resizeWindow(static_cast<int>(boundingRectangle.getWidth()- boundingRectangle.getLeft()),
-								static_cast<int>(boundingRectangle.getHeight() - boundingRectangle.getTop()));
+		_renderer.resizeWindow(static_cast<int>(boundingRectangle.getWidth()),
+								static_cast<int>(boundingRectangle.getHeight()));
 		//offset positions so the graph is centered (top-left graph is on the top-left of image)
 		offsetGraph(-Point2D(boundingRectangle.getLeft(), boundingRectangle.getTop()), nodesPositions);
 		actuallyDrawGraph(graph, nodesPositions);
@@ -123,7 +123,7 @@ namespace gd {
 		size_t nodesCount = nodes.size();
 		vector<Geometry::Point2D> positions = randomPositionsInsideRectangle(graph, rectangle);
 		
-		const int M = 150;
+		const int M = 2500;
 		vector<Geometry::Point2D> displacements;;
 
 		for (int i = 0; i < M; ++i) {
@@ -200,11 +200,11 @@ namespace gd {
 			for (list<int>::const_iterator it = edges[i].begin(); it != edges[i].end(); it++) {
 				Circle circleNode1 = Circle(positions[i], nodes[i].getRadius());
 				Circle circleNode2 = Circle(positions[*it], nodes[*it].getRadius());
-				//double distance = circleNode1.distanceFromCircumferenceToOtherCircumference(circleNode2);
-				double distance = circleNode1.distanceFromCenterToOtherCenter(circleNode2);
+				double distance = circleNode1.distanceFromCircumferenceToOtherCircumference(circleNode2);
+				//double distance = circleNode1.distanceFromCenterToOtherCenter(circleNode2);
 				if (distance > 0) {
-					//Geometry::Point2D distanceVector = circleNode1.distanceVectorFromCircumferenceToOtherCircumference(circleNode2);
-					Geometry::Point2D distanceVector = positions[*it] - positions[i];
+					Geometry::Point2D distanceVector = circleNode1.distanceVectorFromCircumferenceToOtherCircumference(circleNode2);
+					//Geometry::Point2D distanceVector = positions[*it] - positions[i];
 					Geometry::Point2D realDisplacement = (distanceVector / distance) * (distance*distance / k);
 
 					outDisplacements[i] = outDisplacements[i] + realDisplacement;
@@ -216,7 +216,7 @@ namespace gd {
 	void GraphDrawer::moveVertices(const vector<Geometry::Point2D> &displacements, const Geometry::Rectangle &boundingRectangle, vector<Geometry::Point2D> &outPositions) const {
 		size_t n = displacements.size();
 		for (int i = 0; i < n; ++i) {
-			//outPositions[i] = outPositions[i] + 0.2*(displacements[i] / sqrt(displacements[i].x*displacements[i].x + displacements[i].y*displacements[i].y));
+			//outPositions[i] = outPositions[i] + 0.1*(displacements[i] / sqrt(displacements[i].x*displacements[i].x + displacements[i].y*displacements[i].y));
 			//outPositions[i].x = min(boundingRectangle.getWidth(), max(0.0, outPositions[i].x));
 			//outPositions[i].y = min(boundingRectangle.getHeight(), max(0.0, outPositions[i].y));
 			
