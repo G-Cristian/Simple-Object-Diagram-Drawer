@@ -40,7 +40,7 @@ public:
 	void drawTextCenteredInBoundingCircle(const string &text, const Geometry::Circle &circle, double boundingOffsetPerLineOfText);
 
 	void show(int x, int y) const;
-	void exportToImage(const char *imageName) const;
+	void exportToImage(string imageName) const;
 
 private:
 	Window _window;

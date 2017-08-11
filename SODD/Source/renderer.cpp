@@ -257,3 +257,7 @@ void Renderer::show(int x, int y)  const{
 	imshow(_window.name, _img);
 	moveWindow(_window.name, x, y);
 }
+
+void Renderer::exportToImage(string imageName) const {
+	imwrite(imageName, _img);
+}

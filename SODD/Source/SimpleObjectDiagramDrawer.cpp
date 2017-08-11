@@ -64,6 +64,7 @@ int main() {
 	//renderer.drawTextCenteredInBoundingCircle("A\nA\nA\nA\nA\nA\nA\nA\nA\nA\nA\nA\nA\nA\nA", Circle(Point2D(450, 450), 160),0);
 	//renderer.drawTextCenteredInBoundingCircle("A", Circle(Point2D(450, 450), 160),0);
 	renderer.show(0, 0);
+	renderer.exportToImage("test.jpg");
 	
 	waitKey();
 
