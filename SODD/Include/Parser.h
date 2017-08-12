@@ -42,6 +42,7 @@ namespace prsr {
 
 		//Graph parseGraph();
 		//gd::Node parseObject();
+		string readToken(const set<char> &delimiters, int &outTokenStartLine, int &outTokenStartPosition);
 		void parseToken(const string &expectedToken, const set<char> &delimiters, const string &errorMessageIfNotExpectedToken);
 		void parseObjectToken();
 		bool isObjectToken();

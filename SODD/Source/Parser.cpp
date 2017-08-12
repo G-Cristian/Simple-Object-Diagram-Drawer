@@ -46,15 +46,14 @@ namespace prsr {
 
 	}
 
-	//expectedToken must be uppercase.
-	void Parser::parseToken(const string &expectedToken, const set<char> &delimiters, const string &errorMessageIfNotExpectedToken) {
+	string Parser::readToken(const set<char> &delimiters, int &outTokenStartLine, int &outTokenStartPosition) {
 		int previousLine = _currentLine;
 		int previousPosition = _currentPosition;
 		if (skipSpacesAndNewLine())
 			throw ParserException(previousLine + 1, previousPosition + 1, UnexpectedEndOfFileError);
 
-		previousLine = _currentLine;
-		previousPosition = _currentPosition;
+		outTokenStartLine = _currentLine;
+		outTokenStartPosition = _currentPosition;
 
 		string line = _text[_currentLine];
 		size_t lineLength = line.length();
@@ -64,8 +63,18 @@ namespace prsr {
 			_currentPosition++;
 		}
 
+		return parsedText;
+	}
+
+	//expectedToken must be uppercase.
+	void Parser::parseToken(const string &expectedToken, const set<char> &delimiters, const string &errorMessageIfNotExpectedToken) {
+		int tokenStartLine = _currentLine;
+		int tokenStartPosition = _currentPosition;
+
+		string parsedText = readToken(delimiters, tokenStartLine, tokenStartPosition);
+		
 		if (parsedText != expectedToken)
-			throw ParserException(previousLine + 1, previousPosition + 1, errorMessageIfNotExpectedToken);
+			throw ParserException(tokenStartLine + 1, tokenStartPosition + 1, errorMessageIfNotExpectedToken);
 	}
 
 	void Parser::parseObjectToken() {
