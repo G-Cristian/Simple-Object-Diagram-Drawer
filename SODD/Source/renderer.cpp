@@ -9,7 +9,8 @@ Renderer::Renderer(Window &window) {
 	_window.width = window.width;
 	_window.height = window.height;
 
-	_img = Mat::zeros(window.height, window.width, CV_8UC3);
+	//_img = Mat::zeros(window.height, window.width, CV_8UC3);
+	_img = Mat(window.height, window.width, CV_8UC3, Scalar(255, 255, 255));
 }
 
 Renderer::~Renderer() {
@@ -24,11 +25,11 @@ void Renderer::resizeWindow(int width, int height) {
 }
 
 void Renderer::drawCircle(Geometry::Point2D center, int radius) {
-	circle(_img, Point(center.x, center.y), radius, Scalar(255, 255, 255));
+	circle(_img, Point(center.x, center.y), radius, Scalar(0, 0, 0));
 }
 
 void Renderer::drawLine(Geometry::Point2D p1, Geometry::Point2D p2) {
-	line(_img, Point(p1.x, p1.y), Point(p2.x, p2.y), Scalar(255,255,255));
+	line(_img, Point(p1.x, p1.y), Point(p2.x, p2.y), Scalar(0,0,0));
 }
 
 void Renderer::drawDashedLine(Geometry::Point2D p1, Geometry::Point2D p2, int linesLength) {
@@ -250,7 +251,7 @@ void Renderer::drawTextCentered(const string &text, double boundingOffset, doubl
 	*/
 
 	putText(_img, text, Point(position.x, position.y), fontFace, fontScale,
-		Scalar::all(255), thickness, 8);
+		Scalar::all(0), thickness, 8);
 }
 
 void Renderer::show(int x, int y)  const{
