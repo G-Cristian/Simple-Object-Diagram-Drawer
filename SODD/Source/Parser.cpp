@@ -28,8 +28,10 @@ namespace prsr {
 	const string Parser::UnexpectedEndOfFileError = "Unexpected end of file.";
 	const string Parser::DoubleQuotesExpectedError = "Double quotes expected.";
 	const string Parser::EndOfStringExpectedError = "End of string (\") expected.";
-	const string Parser::ColonExpectedError = "';' expected.";
+	const string Parser::ColonExpectedError = "':' expected.";
+	const string Parser::SemicolonExpectedError = "';' expected.";
 	const string Parser::ObjectTokenExpectedError = "'Object' expected.";
+	const string Parser::NumberExpectedError = "Number expected.";
 
 	Parser::Parser(const vector<string> &text):Parser(text, 0, 0){
 	}
@@ -124,7 +126,77 @@ namespace prsr {
 		return result;
 	}
 
-	void Parser::parseColon() {
+	double Parser::parseNumber() {
+		int previousLine = _currentLine;
+		int previousPosition = _currentPosition;
+		double result = 0.0;
+
+		if (skipSpacesAndNewLine())
+			throw ParserException(previousLine + 1, previousPosition + 1, UnexpectedEndOfFileError);
+
+		string line = _text[_currentLine];
+		size_t lineLength = line.length();
+		
+		if (!isNumeric(line[_currentPosition]) && line[_currentPosition] != '.') {
+			throw ParserException(_currentLine + 1, _currentPosition + 1, NumberExpectedError);
+		}
+
+		result = parseIntegerPart();
+
+		if (_currentPosition < lineLength && line[_currentPosition] == '.') {
+			_currentPosition++;
+
+			if (_currentPosition >= lineLength || !isNumeric(line[_currentPosition])) {
+				throw ParserException(_currentLine + 1, _currentPosition + 1, NumberExpectedError);
+			}
+
+			result += parseDecimalPart();
+		}
+
+		return result;
+	}
+
+	int Parser::parseIntegerPart() {
+		int result = 0;
+
+		string line = _text[_currentLine];
+		size_t lineLength = line.length();
+
+		while (_currentPosition < lineLength && isNumeric(line[_currentPosition])) {
+			result *= 10;
+			result += charNumberToInt(line[_currentPosition]);
+
+			_currentPosition++;
+		}
+
+		return result;
+	}
+
+	double Parser::parseDecimalPart() {
+		double result = 0.0;
+
+		string line = _text[_currentLine];
+		size_t lineLength = line.length();
+		double divider = 10;
+		while (_currentPosition < lineLength && isNumeric(line[_currentPosition])) {
+			result += charNumberToInt(line[_currentPosition]) / divider;
+			divider *= 10;
+
+			_currentPosition++;
+		}
+
+		return result;
+	}
+
+	inline bool Parser::isNumeric(char c) const {
+		return c >= '0' && c <= '9';
+	}
+	//'c' should be a number.
+	inline int Parser::charNumberToInt(char c) const {
+		return c - '0';
+	}
+
+	void Parser::parseSingleCharToken(char expectedChar, const string &errorMessageIfNotExpectedChar) {
 		int previousLine = _currentLine;
 		int previousPosition = _currentPosition;
 		if (skipSpacesAndNewLine())
@@ -132,19 +204,19 @@ namespace prsr {
 
 		string line = _text[_currentLine];
 		size_t lineLength = line.length();
-		if (line[_currentPosition] != ';')
-			throw ParserException(_currentLine + 1, _currentPosition + 1, ColonExpectedError);
+		if (line[_currentPosition] != expectedChar)
+			throw ParserException(_currentLine + 1, _currentPosition + 1, errorMessageIfNotExpectedChar);
 
 		_currentPosition++;
 	}
 
-	bool Parser::isColon() {
+	bool Parser::isSingleCharToken(char expectedChar) {
 		int previousLine = _currentLine;
 		int previousPosition = _currentPosition;
 		bool result = true;
 
 		try {
-			parseColon();
+			parseSingleCharToken(expectedChar, "");
 		}
 		catch (ParserException &e) {
 			result = false;
@@ -154,6 +226,22 @@ namespace prsr {
 		_currentPosition = previousPosition;
 
 		return result;
+	}
+
+	void Parser::parseColon() {
+		parseSingleCharToken(':', ColonExpectedError);
+	}
+
+	bool Parser::isColon() {
+		return isSingleCharToken(':');
+	}
+
+	void Parser::parseSemicolon() {
+		parseSingleCharToken(';', SemicolonExpectedError);
+	}
+
+	bool Parser::isSemicolon() {
+		return isSingleCharToken(';');
 	}
 
 	//returns 'true' if end of text.
