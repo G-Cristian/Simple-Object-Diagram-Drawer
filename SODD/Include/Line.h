@@ -1,7 +1,7 @@
 #ifndef _LINE_H_
 #define _LINE_H_
 
-#include <opencv2/core.hpp>
+#include <opencv2/core/core.hpp>
 #include <math.h>
 #include "Point2D.h"
 #include "Circle.h"
