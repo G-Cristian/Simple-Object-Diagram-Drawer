@@ -32,6 +32,8 @@ namespace prsr {
 	const string Parser::SemicolonExpectedError = "';' expected.";
 	const string Parser::ObjectTokenExpectedError = "'Object' expected.";
 	const string Parser::NumberExpectedError = "Number expected.";
+	const string Parser::OpeningBraceExpectedError = "'{' expected.";
+	const string Parser::ClosingBraceExpectedError = "'}' expected.";
 
 	Parser::Parser(const vector<string> &text):Parser(text, 0, 0){
 	}
@@ -48,6 +50,7 @@ namespace prsr {
 
 	}
 
+	//The returned string is in uppercase.
 	string Parser::readToken(const set<char> &delimiters, int &outTokenStartLine, int &outTokenStartPosition) {
 		int previousLine = _currentLine;
 		int previousPosition = _currentPosition;
@@ -100,6 +103,14 @@ namespace prsr {
 		_currentPosition = previousPosition;
 
 		return result;
+	}
+
+	string Parser::parseObjectName() {
+		char delimiters[] = { ' ', '{' };
+		int tokenStartLine = _currentLine;
+		int tokenStartPosition = _currentPosition;
+
+		return readToken(set<char>(delimiters, delimiters + 2), tokenStartLine, tokenStartPosition);
 	}
 
 	string Parser::parseString() {
@@ -242,6 +253,18 @@ namespace prsr {
 
 	bool Parser::isSemicolon() {
 		return isSingleCharToken(';');
+	}
+
+	void Parser::parseOpeningBrace() {
+		parseSingleCharToken('{', OpeningBraceExpectedError);
+	}
+
+	void Parser::parseClosingBrace() {
+		parseSingleCharToken('}', ClosingBraceExpectedError);
+	}
+
+	bool Parser::isClosingBrace() {
+		return isSingleCharToken('}');
 	}
 
 	//returns 'true' if end of text.

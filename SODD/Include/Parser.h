@@ -37,6 +37,8 @@ namespace prsr {
 		const static string SemicolonExpectedError;
 		const static string ObjectTokenExpectedError;
 		const static string NumberExpectedError;
+		const static string OpeningBraceExpectedError;
+		const static string ClosingBraceExpectedError;
 
 		Parser(const vector<string> &text);
 		Parser(const vector<string> &text, int line, int position);
@@ -48,6 +50,7 @@ namespace prsr {
 		void parseToken(const string &expectedToken, const set<char> &delimiters, const string &errorMessageIfNotExpectedToken);
 		void parseObjectToken();
 		bool isObjectToken();
+		string parseObjectName();
 		string parseString();
 		double parseNumber();
 		void parseSingleCharToken(char expectedChar, const string &errorMessageIfNotExpectedChar);
@@ -56,6 +59,9 @@ namespace prsr {
 		bool isColon();
 		void parseSemicolon();
 		bool isSemicolon();
+		void parseOpeningBrace();
+		void parseClosingBrace();
+		bool isClosingBrace();
 	private:
 		//returns 'true' if end of text.
 		bool skipSpacesAndNewLine();

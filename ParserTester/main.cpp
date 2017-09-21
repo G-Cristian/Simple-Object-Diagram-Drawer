@@ -28,6 +28,9 @@ bool testIsSemicolonTrue();
 bool testIsSemicolonFalse1();
 bool testIsSemicolonFalse2();
 
+bool testExpectedOpeningBraceError();
+bool testExpectedClosingBraceError();
+
 bool testParseObjectToken1();
 bool testParseObjectToken2();
 bool testFailParseObjectTokenUnexpectedEndOfFile();
@@ -35,6 +38,10 @@ bool testFailObjectToken1();
 bool testFailObjectToken2();
 bool testIsObjectTokenTrue();
 bool testIsObjectTokenFalse();
+
+bool testParseObjectName1();
+bool testParseObjectName2();
+bool testFailParseObjectNameUnexpectedEndOfFile();
 
 bool testParseNumberInteger1();
 bool testParseNumberInteger2();
@@ -71,6 +78,9 @@ int main() {
 	message += checkTestingFunction(testIsSemicolonFalse1, correctTests, incorrectTests, "testIsSemicolonFalse1");
 	message += checkTestingFunction(testIsSemicolonFalse2, correctTests, incorrectTests, "testIsSemicolonFalse2");
 
+	message += checkTestingFunction(testExpectedOpeningBraceError, correctTests, incorrectTests, "testExpectedOpeningBraceError");
+	message += checkTestingFunction(testExpectedClosingBraceError, correctTests, incorrectTests, "testExpectedClosingBraceError");
+
 	message += checkTestingFunction(testParseObjectToken1, correctTests, incorrectTests, "testParseObjectToken1");
 	message += checkTestingFunction(testParseObjectToken2, correctTests, incorrectTests, "testParseObjectToken2");
 	message += checkTestingFunction(testFailParseObjectTokenUnexpectedEndOfFile, correctTests, incorrectTests, "testFailParseObjectTokenUnexpectedEndOfFile");
@@ -78,6 +88,10 @@ int main() {
 	message += checkTestingFunction(testFailObjectToken2, correctTests, incorrectTests, "testFailObjectToken2");
 	message += checkTestingFunction(testIsObjectTokenTrue, correctTests, incorrectTests, "testIsObjectTokenTrue");
 	message += checkTestingFunction(testIsObjectTokenFalse, correctTests, incorrectTests, "testIsObjectTokenFalse");
+
+	message += checkTestingFunction(testParseObjectName1, correctTests, incorrectTests, "testParseObjectName1");
+	message += checkTestingFunction(testParseObjectName2, correctTests, incorrectTests, "testParseObjectName2");
+	message += checkTestingFunction(testFailParseObjectNameUnexpectedEndOfFile, correctTests, incorrectTests, "testFailParseObjectNameUnexpectedEndOfFile");
 	
 	message += checkTestingFunction(testParseNumberInteger1, correctTests, incorrectTests, "testParseNumberInteger1");
 	message += checkTestingFunction(testParseNumberInteger2, correctTests, incorrectTests, "testParseNumberInteger2");
@@ -94,7 +108,7 @@ int main() {
 	cout << "Incorrect tests: " << incorrectTests << endl;
 	cout << "The tests that failed were: " << message << endl;
 
-	_getwch();
+	//_getwch();
 
 	return 0;
 }
@@ -338,6 +352,44 @@ bool testIsSemicolonFalse2() {
 	return !parser.isSemicolon();
 }
 
+bool testExpectedOpeningBraceError() {
+	vector<string> strings = vector<string>();
+	strings.push_back("     ");
+	strings.push_back("   a");
+	Parser parser = Parser(strings);
+	try {
+		parser.parseOpeningBrace();
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::OpeningBraceExpectedError << " Line: " << 2 << ", Position: " << 4 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+
+	return false;
+}
+
+bool testExpectedClosingBraceError() {
+	vector<string> strings = vector<string>();
+	strings.push_back("     ");
+	strings.push_back("   a");
+	Parser parser = Parser(strings);
+	try {
+		parser.parseClosingBrace();
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::ClosingBraceExpectedError << " Line: " << 2 << ", Position: " << 4 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+
+	return false;
+}
+
 bool testParseObjectToken1() {
 	vector<string> strings = vector<string>();
 	strings.push_back("  ");
@@ -435,6 +487,57 @@ bool testIsObjectTokenFalse() {
 	Parser parser = Parser(strings);
 
 	return !parser.isObjectToken();
+}
+
+bool testParseObjectName1() {
+	vector<string> strings = vector<string>();
+	strings.push_back("  ");
+	strings.push_back("    hOlA chau{");
+	Parser parser = Parser(strings);
+	string name = "";
+	const string expectedName = "HOLA";
+	try {
+		name = parser.parseObjectName();
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+	return name == expectedName;
+}
+
+bool testParseObjectName2() {
+	vector<string> strings = vector<string>();
+	strings.push_back("  ");
+	strings.push_back("    hOlA{chau ");
+	Parser parser = Parser(strings);
+	string name = "";
+	const string expectedName = "HOLA";
+	try {
+		name = parser.parseObjectName();
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+	return name == expectedName;
+}
+
+bool testFailParseObjectNameUnexpectedEndOfFile() {
+	vector<string> strings = vector<string>();
+	strings.push_back("  ");
+	strings.push_back("    ");
+	Parser parser = Parser(strings);
+	string name = "";
+	try {
+		name = parser.parseObjectName();
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::UnexpectedEndOfFileError << " Line: " << 1 << ", Position: " << 1 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+	return false;
 }
 
 bool testParseNumberInteger1() {
