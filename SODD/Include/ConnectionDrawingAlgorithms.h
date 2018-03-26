@@ -9,7 +9,7 @@ using namespace Geometry;
 class ConnectionDrawingAlgorithm {
 public:
 	ConnectionDrawingAlgorithm();
-	~ConnectionDrawingAlgorithm();
+	virtual ~ConnectionDrawingAlgorithm();
 
 	virtual void drawConnection(Renderer &renderer, const Point2D &p1, const Point2D &p2) const = 0;
 };
@@ -17,7 +17,7 @@ public:
 class LineDrawingAlgorithm:public ConnectionDrawingAlgorithm {
 public:
 	LineDrawingAlgorithm();
-	~LineDrawingAlgorithm();
+	virtual ~LineDrawingAlgorithm();
 
 	virtual void drawConnection(Renderer &renderer, const Point2D &p1, const Point2D &p2) const;
 };
@@ -25,7 +25,7 @@ public:
 class DashedLineDrawingAlgorithm:public ConnectionDrawingAlgorithm {
 public:
 	DashedLineDrawingAlgorithm();
-	~DashedLineDrawingAlgorithm();
+	virtual ~DashedLineDrawingAlgorithm();
 
 	virtual void drawConnection(Renderer &renderer, const Point2D &p1, const Point2D &p2) const;
 };
@@ -33,7 +33,7 @@ public:
 class ArrowDrawingAlgorithm :public ConnectionDrawingAlgorithm {
 public:
 	ArrowDrawingAlgorithm();
-	~ArrowDrawingAlgorithm();
+	virtual ~ArrowDrawingAlgorithm();
 
 	virtual void drawConnection(Renderer &renderer, const Point2D &p1, const Point2D &p2) const;
 };
@@ -41,7 +41,7 @@ public:
 class DashedArrowDrawingAlgorithm :public ConnectionDrawingAlgorithm {
 public:
 	DashedArrowDrawingAlgorithm();
-	~DashedArrowDrawingAlgorithm();
+	virtual ~DashedArrowDrawingAlgorithm();
 
 	virtual void drawConnection(Renderer &renderer, const Point2D &p1, const Point2D &p2) const;
 };
@@ -49,7 +49,7 @@ public:
 class DoubleArrowDrawingAlgorithm :public ConnectionDrawingAlgorithm {
 public:
 	DoubleArrowDrawingAlgorithm();
-	~DoubleArrowDrawingAlgorithm();
+	virtual ~DoubleArrowDrawingAlgorithm();
 
 	virtual void drawConnection(Renderer &renderer, const Point2D &p1, const Point2D &p2) const;
 };
@@ -57,7 +57,7 @@ public:
 class DashedDoubleArrowDrawingAlgorithm :public ConnectionDrawingAlgorithm {
 public:
 	DashedDoubleArrowDrawingAlgorithm();
-	~DashedDoubleArrowDrawingAlgorithm();
+	virtual ~DashedDoubleArrowDrawingAlgorithm();
 
 	virtual void drawConnection(Renderer &renderer, const Point2D &p1, const Point2D &p2) const;
 };
@@ -65,7 +65,7 @@ public:
 class ReversedArrowDrawingAlgorithm :public ConnectionDrawingAlgorithm {
 public:
 	ReversedArrowDrawingAlgorithm();
-	~ReversedArrowDrawingAlgorithm();
+	virtual ~ReversedArrowDrawingAlgorithm();
 
 	virtual void drawConnection(Renderer &renderer, const Point2D &p1, const Point2D &p2) const;
 };
@@ -73,7 +73,7 @@ public:
 class ReversedDashedArrowDrawingAlgorithm :public ConnectionDrawingAlgorithm {
 public:
 	ReversedDashedArrowDrawingAlgorithm();
-	~ReversedDashedArrowDrawingAlgorithm();
+	virtual ~ReversedDashedArrowDrawingAlgorithm();
 
 	virtual void drawConnection(Renderer &renderer, const Point2D &p1, const Point2D &p2) const;
 };
