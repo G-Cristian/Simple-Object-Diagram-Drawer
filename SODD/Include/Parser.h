@@ -36,6 +36,7 @@ namespace prsr {
 		const static string ColonExpectedError;
 		const static string SemicolonExpectedError;
 		const static string ObjectTokenExpectedError;
+		const static string DescriptionTokenExpectedError;
 		const static string NumberExpectedError;
 		const static string OpeningBraceExpectedError;
 		const static string ClosingBraceExpectedError;
@@ -51,6 +52,8 @@ namespace prsr {
 		void parseObjectToken();
 		bool isObjectToken();
 		string parseObjectName();
+		void parseDescriptionToken();
+		bool isDescriptionToken();
 		string parseString();
 		double parseNumber();
 		void parseSingleCharToken(char expectedChar, const string &errorMessageIfNotExpectedChar);

@@ -31,6 +31,7 @@ namespace prsr {
 	const string Parser::ColonExpectedError = "':' expected.";
 	const string Parser::SemicolonExpectedError = "';' expected.";
 	const string Parser::ObjectTokenExpectedError = "'Object' expected.";
+	const string Parser::DescriptionTokenExpectedError = "'Description' expected.";
 	const string Parser::NumberExpectedError = "Number expected.";
 	const string Parser::OpeningBraceExpectedError = "'{' expected.";
 	const string Parser::ClosingBraceExpectedError = "'}' expected.";
@@ -111,6 +112,29 @@ namespace prsr {
 		int tokenStartPosition = _currentPosition;
 
 		return readToken(set<char>(delimiters, delimiters + 2), tokenStartLine, tokenStartPosition);
+	}
+
+	void Parser::parseDescriptionToken() {
+		char delimiters[] = { ' ', ':' };
+		parseToken("DESCRIPTION", set<char>(delimiters, delimiters + 2), DescriptionTokenExpectedError);
+	}
+
+	bool Parser::isDescriptionToken() {
+		int previousLine = _currentLine;
+		int previousPosition = _currentPosition;
+		int result = true;
+
+		try {
+			parseDescriptionToken();
+		}
+		catch (ParserException &e) {
+			result = false;
+		}
+		
+		_currentLine = previousLine;
+		_currentPosition = previousPosition;
+
+		return result;
 	}
 
 	string Parser::parseString() {
