@@ -7,6 +7,7 @@
 #include <set>
 #include <exception>
 #include <functional>
+#include <memory>
 
 #include "graphdrawer.h"
 
@@ -14,6 +15,9 @@ using namespace std;
 using namespace gd;
 
 namespace prsr {
+	class AbstractParserNodeProperty;
+	class ParserNodeDescriptionProperty;
+	class ParserNodeRadiusProperty;
 
 	class ParserException : public exception {
 	public:
@@ -27,6 +31,11 @@ namespace prsr {
 		string _msg;
 
 		string _finalMsg;
+	};
+
+	struct NodeProperties {
+		string description;
+		double radius;
 	};
 
 	class Parser {
@@ -49,6 +58,8 @@ namespace prsr {
 
 		//Graph parseGraph();
 		//gd::Node parseObject();
+		shared_ptr<ParserNodeDescriptionProperty> parseDescriptionProperty();
+		shared_ptr<ParserNodeRadiusProperty> parseRadiusProperty();
 		string readToken(const set<char> &delimiters, int &outTokenStartLine, int &outTokenStartPosition);
 		void parseToken(const string &expectedToken, const set<char> &delimiters, const string &errorMessageIfNotExpectedToken);
 		bool isToken(function<void()> tokenParsingFunction);

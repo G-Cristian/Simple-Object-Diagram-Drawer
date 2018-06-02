@@ -3,6 +3,8 @@
 #include <string>
 
 #include "../SODD/Include/Parser.h"
+#include "../SODD/Include/ParserNodeProperty.h"
+
 
 using namespace std;
 using namespace prsr;
@@ -76,6 +78,22 @@ bool testFailNumberIntegerPart();
 bool testFailNumberDecimalPartUnexpectedEndOfLine();
 bool testFailNumberDecimalPartUnexpectedCharacter();
 
+//Description property test
+bool testParseDescriptionProperty();
+bool testFailParseDescriptionPropertyUnexpectedEndOfFile();
+bool testFailParseDescriptionPropertyMissingSemicolon();
+bool testFailParseDescriptionPropertyMissingColon();
+bool testFailParseDescriptionPropertyMissingOpeningDoubleQuotes();
+bool testFailParseDescriptionPropertyMissingEndingDoubleQuotes();
+
+//Radius property test
+bool testParseRadiusProperty();
+bool testFailParseRadiusPropertyUnexpectedEndOfFile();
+bool testFailParseRadiusPropertyMissingSemicolon1();
+bool testFailParseRadiusPropertyMissingSemicolon2();
+bool testFailParseRadiusPropertyMissingColon();
+bool testFailParseRadiusPropertyNumberExpected();
+
 int main() {
 	int correctTests = 0;
 	int incorrectTests = 0;
@@ -146,6 +164,22 @@ int main() {
 	message += CHECK_TESTING_FUNCTION(testFailNumberIntegerPart, correctTests, incorrectTests);
 	message += CHECK_TESTING_FUNCTION(testFailNumberDecimalPartUnexpectedEndOfLine, correctTests, incorrectTests);
 	message += CHECK_TESTING_FUNCTION(testFailNumberDecimalPartUnexpectedCharacter, correctTests, incorrectTests);
+
+	//Description property tests
+	message += CHECK_TESTING_FUNCTION(testParseDescriptionProperty, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailParseDescriptionPropertyUnexpectedEndOfFile, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailParseDescriptionPropertyMissingSemicolon, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailParseDescriptionPropertyMissingColon, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailParseDescriptionPropertyMissingOpeningDoubleQuotes, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailParseDescriptionPropertyMissingEndingDoubleQuotes, correctTests, incorrectTests);
+
+	//Radius property tests
+	message += CHECK_TESTING_FUNCTION(testParseRadiusProperty, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailParseRadiusPropertyUnexpectedEndOfFile, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailParseRadiusPropertyMissingSemicolon1, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailParseRadiusPropertyMissingSemicolon2, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailParseRadiusPropertyMissingColon, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailParseRadiusPropertyNumberExpected, correctTests, incorrectTests);
 
 	cout << "Correct tests: " << correctTests << endl;
 	cout << "Incorrect tests: " << incorrectTests << endl;
@@ -230,7 +264,7 @@ bool testFailMissingEndingDoubleQuotes() {
 	catch (ParserException &e) {
 		string errorMsg = string(e.what());
 		ostringstream expectedError;
-		expectedError << Parser::EndOfStringExpectedError << " Line: " << 2 << ", Position: " << 9 << ".";
+		expectedError << Parser::EndOfStringExpectedError << " Line: " << 2 << ", Position: " << 10 << ".";
 
 		return errorMsg == expectedError.str();
 	}
@@ -977,6 +1011,222 @@ bool testFailNumberDecimalPartUnexpectedCharacter() {
 		string errorMsg = string(e.what());
 		ostringstream expectedError;
 		expectedError << Parser::NumberExpectedError << " Line: " << 2 << ", Position: " << 9 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+	return false;
+}
+/**************************/
+//Description property test
+/**************************/
+bool testParseDescriptionProperty() {
+	vector<string> strings = vector<string>();
+	string result = "";
+	strings.push_back("  ");
+	strings.push_back("  desCription  ");
+	strings.push_back("  :     \"  Hola que tal \"  ");
+	strings.push_back("  ;  ");
+	Parser parser = Parser(strings);
+	try {
+		ParserNodeDescriptionProperty property = *(parser.parseDescriptionProperty());
+		NodeProperties nodeProperties;
+		property.setThisPropertyToNodeProperty(nodeProperties);
+		result = nodeProperties.description;
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+
+	return result == "  Hola que tal ";
+}
+
+bool testFailParseDescriptionPropertyUnexpectedEndOfFile() {
+	vector<string> strings = vector<string>();
+	strings.push_back(" Description : ");
+	Parser parser = Parser(strings);
+	try {
+		ParserNodeDescriptionProperty property = *(parser.parseDescriptionProperty());
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::UnexpectedEndOfFileError << " Line: " << 1 << ", Position: " << 15<< ".";
+
+		return errorMsg == expectedError.str();
+	}
+	return false;
+}
+
+bool testFailParseDescriptionPropertyMissingSemicolon() {
+	vector<string> strings = vector<string>();
+	strings.push_back(" Description : \" hola\",");
+	Parser parser = Parser(strings);
+	try {
+		ParserNodeDescriptionProperty property = *(parser.parseDescriptionProperty());
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::SemicolonExpectedError << " Line: " << 1 << ", Position: " << 23 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+	return false;
+}
+
+bool testFailParseDescriptionPropertyMissingColon() {
+	vector<string> strings = vector<string>();
+	strings.push_back(" Description  ;");
+	Parser parser = Parser(strings);
+	try {
+		ParserNodeDescriptionProperty property = *(parser.parseDescriptionProperty());
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::ColonExpectedError << " Line: " << 1 << ", Position: " << 15 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+	return false;
+}
+
+bool testFailParseDescriptionPropertyMissingOpeningDoubleQuotes() {
+	vector<string> strings = vector<string>();
+	strings.push_back("Description:  h");
+	Parser parser = Parser(strings);
+	try {
+		ParserNodeDescriptionProperty property = *(parser.parseDescriptionProperty());
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::DoubleQuotesExpectedError << " Line: " << 1 << ", Position: " << 15 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+	return false;
+}
+
+bool testFailParseDescriptionPropertyMissingEndingDoubleQuotes() {
+	vector<string> strings = vector<string>();
+	strings.push_back("Description:\"h  ");
+	Parser parser = Parser(strings);
+	try {
+		ParserNodeDescriptionProperty property = *(parser.parseDescriptionProperty());
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::EndOfStringExpectedError << " Line: " << 1 << ", Position: " << 17 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+	return false;
+}
+
+/**************************/
+//Radius property test
+/**************************/
+bool testParseRadiusProperty() {
+	vector<string> strings = vector<string>();
+	double result = 0;
+	strings.push_back("  ");
+	strings.push_back("  Radius  ");
+	strings.push_back("  :  0120.01020; ");
+	Parser parser = Parser(strings);
+	try {
+		ParserNodeRadiusProperty property = *(parser.parseRadiusProperty());
+		NodeProperties nodeProperties;
+		property.setThisPropertyToNodeProperty(nodeProperties);
+		result = nodeProperties.radius;
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+
+	return result == 120.0102;
+}
+
+bool testFailParseRadiusPropertyUnexpectedEndOfFile() {
+	vector<string> strings = vector<string>();
+	strings.push_back(" Radius : ");
+	Parser parser = Parser(strings);
+	try {
+		ParserNodeRadiusProperty property = *(parser.parseRadiusProperty());
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::UnexpectedEndOfFileError << " Line: " << 1 << ", Position: " << 10 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+	return false;
+}
+
+bool testFailParseRadiusPropertyMissingSemicolon1() {
+	vector<string> strings = vector<string>();
+	strings.push_back(" Radius : 12.3  9");
+	Parser parser = Parser(strings);
+	try {
+		ParserNodeRadiusProperty property = *(parser.parseRadiusProperty());
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::SemicolonExpectedError << " Line: " << 1 << ", Position: " << 17 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+	return false;
+}
+
+bool testFailParseRadiusPropertyMissingSemicolon2() {
+	vector<string> strings = vector<string>();
+	strings.push_back(" Radius : 12.3G  ");
+	Parser parser = Parser(strings);
+	try {
+		ParserNodeRadiusProperty property = *(parser.parseRadiusProperty());
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::SemicolonExpectedError << " Line: " << 1 << ", Position: " << 15 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+	return false;
+}
+
+bool testFailParseRadiusPropertyMissingColon() {
+	vector<string> strings = vector<string>();
+	strings.push_back(" Radius  9");
+	Parser parser = Parser(strings);
+	try {
+		ParserNodeRadiusProperty property = *(parser.parseRadiusProperty());
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::ColonExpectedError << " Line: " << 1 << ", Position: " << 10 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+	return false;
+}
+
+bool testFailParseRadiusPropertyNumberExpected() {
+	vector<string> strings = vector<string>();
+	strings.push_back("Radius:A");
+	Parser parser = Parser(strings);
+	try {
+		ParserNodeRadiusProperty property = *(parser.parseRadiusProperty());
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::NumberExpectedError << " Line: " << 1 << ", Position: " << 8 << ".";
 
 		return errorMsg == expectedError.str();
 	}

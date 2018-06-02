@@ -1,5 +1,7 @@
 #include "../Include/Parser.h"
 #include <cctype>
+#include <memory>
+#include "../Include/ParserNodeProperty.h"
 
 using namespace std;
 
@@ -50,6 +52,24 @@ namespace prsr {
 
 	Parser::~Parser() {
 
+	}
+
+	shared_ptr<ParserNodeDescriptionProperty> Parser::parseDescriptionProperty()
+	{
+		parseDescriptionToken();
+		parseColon();
+		string description = parseString();
+		parseSemicolon();
+		return make_shared<ParserNodeDescriptionProperty>(description);
+	}
+
+	shared_ptr<ParserNodeRadiusProperty> Parser::parseRadiusProperty()
+	{
+		parseRadiusToken();
+		parseColon();
+		double radius = parseNumber();
+		parseSemicolon();
+		return make_shared<ParserNodeRadiusProperty>(radius);
 	}
 
 	//The returned string is in uppercase.
@@ -161,8 +181,9 @@ namespace prsr {
 		}
 
 		if (_currentPosition >= lineLength)
-			throw ParserException(_currentLine + 1, _currentPosition, EndOfStringExpectedError);
+			throw ParserException(_currentLine + 1, _currentPosition + 1, EndOfStringExpectedError);
 
+		_currentPosition++;
 		return result;
 	}
 
