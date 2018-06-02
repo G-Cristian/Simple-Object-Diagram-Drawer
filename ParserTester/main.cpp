@@ -7,6 +7,8 @@
 using namespace std;
 using namespace prsr;
 
+#define CHECK_TESTING_FUNCTION(functionToTest, inOutCorrectTests, inOutIncorrectTests) checkTestingFunction(functionToTest, inOutCorrectTests, inOutIncorrectTests, #functionToTest)
+
 string checkTestingFunction(bool(*functionToTest)(), int &inOutCorrectTests, int &inOutincorrectTests, const string errorMsgToReturn);
 
 bool testParseStringCorrect();
@@ -59,50 +61,50 @@ int main() {
 	int incorrectTests = 0;
 	string message = "";
 	
-	message += checkTestingFunction(testParseStringCorrect, correctTests, incorrectTests, "testParseStringCorrect");
-	message += checkTestingFunction(testFailParseStringUnexpectedEndOfFile, correctTests, incorrectTests, "testFaileParseStringUnexpectedEndOfFile");
-	message += checkTestingFunction(testFailMissingOpeningDoubleQuotes, correctTests, incorrectTests, "testFaileMissingOpeningDoubleQuotes");
-	message += checkTestingFunction(testFailMissingEndingDoubleQuotes, correctTests, incorrectTests, "testFailMissingEndingDoubleQuotes");
+	message += CHECK_TESTING_FUNCTION(testParseStringCorrect, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailParseStringUnexpectedEndOfFile, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailMissingOpeningDoubleQuotes, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailMissingEndingDoubleQuotes, correctTests, incorrectTests);
 	
-	message += checkTestingFunction(testParseColon, correctTests, incorrectTests, "testParseColon");
-	message += checkTestingFunction(testFailParseColonUnexpectedEndOfFile, correctTests, incorrectTests, "testFailParseColonUnexpectedEndOfFile");
-	message += checkTestingFunction(testExpectedColonError, correctTests, incorrectTests, "testExpectedColonError");
-	message += checkTestingFunction(testIsColonTrue, correctTests, incorrectTests, "testIsColonTrue");
-	message += checkTestingFunction(testIsColonFalse1, correctTests, incorrectTests, "testIsColonFalse1");
-	message += checkTestingFunction(testIsColonFalse2, correctTests, incorrectTests, "testIsColonFalse2");
+	message += CHECK_TESTING_FUNCTION(testParseColon, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailParseColonUnexpectedEndOfFile, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testExpectedColonError, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testIsColonTrue, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testIsColonFalse1, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testIsColonFalse2, correctTests, incorrectTests);
 
-	message += checkTestingFunction(testParseSemicolon, correctTests, incorrectTests, "testParseSemicolon");
-	message += checkTestingFunction(testFailParseSemicolonUnexpectedEndOfFile, correctTests, incorrectTests, "testFailParseSemicolonUnexpectedEndOfFile");
-	message += checkTestingFunction(testExpectedSemicolonError, correctTests, incorrectTests, "testExpectedSemicolonError");
-	message += checkTestingFunction(testIsSemicolonTrue, correctTests, incorrectTests, "testIsSemicolonTrue");
-	message += checkTestingFunction(testIsSemicolonFalse1, correctTests, incorrectTests, "testIsSemicolonFalse1");
-	message += checkTestingFunction(testIsSemicolonFalse2, correctTests, incorrectTests, "testIsSemicolonFalse2");
+	message += CHECK_TESTING_FUNCTION(testParseSemicolon, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailParseSemicolonUnexpectedEndOfFile, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testExpectedSemicolonError, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testIsSemicolonTrue, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testIsSemicolonFalse1, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testIsSemicolonFalse2, correctTests, incorrectTests);
 
-	message += checkTestingFunction(testExpectedOpeningBraceError, correctTests, incorrectTests, "testExpectedOpeningBraceError");
-	message += checkTestingFunction(testExpectedClosingBraceError, correctTests, incorrectTests, "testExpectedClosingBraceError");
+	message += CHECK_TESTING_FUNCTION(testExpectedOpeningBraceError, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testExpectedClosingBraceError, correctTests, incorrectTests);
 
-	message += checkTestingFunction(testParseObjectToken1, correctTests, incorrectTests, "testParseObjectToken1");
-	message += checkTestingFunction(testParseObjectToken2, correctTests, incorrectTests, "testParseObjectToken2");
-	message += checkTestingFunction(testFailParseObjectTokenUnexpectedEndOfFile, correctTests, incorrectTests, "testFailParseObjectTokenUnexpectedEndOfFile");
-	message += checkTestingFunction(testFailObjectToken1, correctTests, incorrectTests, "testFailObjectToken1");
-	message += checkTestingFunction(testFailObjectToken2, correctTests, incorrectTests, "testFailObjectToken2");
-	message += checkTestingFunction(testIsObjectTokenTrue, correctTests, incorrectTests, "testIsObjectTokenTrue");
-	message += checkTestingFunction(testIsObjectTokenFalse, correctTests, incorrectTests, "testIsObjectTokenFalse");
+	message += CHECK_TESTING_FUNCTION(testParseObjectToken1, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testParseObjectToken2, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailParseObjectTokenUnexpectedEndOfFile, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailObjectToken1, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailObjectToken2, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testIsObjectTokenTrue, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testIsObjectTokenFalse, correctTests, incorrectTests);
 
-	message += checkTestingFunction(testParseObjectName1, correctTests, incorrectTests, "testParseObjectName1");
-	message += checkTestingFunction(testParseObjectName2, correctTests, incorrectTests, "testParseObjectName2");
-	message += checkTestingFunction(testFailParseObjectNameUnexpectedEndOfFile, correctTests, incorrectTests, "testFailParseObjectNameUnexpectedEndOfFile");
-	
-	message += checkTestingFunction(testParseNumberInteger1, correctTests, incorrectTests, "testParseNumberInteger1");
-	message += checkTestingFunction(testParseNumberInteger2, correctTests, incorrectTests, "testParseNumberInteger2");
-	message += checkTestingFunction(testParseNumberDecimal1, correctTests, incorrectTests, "testParseNumberDecimal1");
-	message += checkTestingFunction(testParseNumberDecimal2, correctTests, incorrectTests, "testParseNumberDecimal2");
-	message += checkTestingFunction(testParseNumberIntegerAndDecimal1, correctTests, incorrectTests, "testParseNumberIntegerAndDecimal1");
-	message += checkTestingFunction(testParseNumberIntegerAndDecimal2, correctTests, incorrectTests, "testParseNumberIntegerAndDecimal2");
-	message += checkTestingFunction(testFailParseNumberUnexpectedEndOfFile, correctTests, incorrectTests, "testFailParseNumberUnexpectedEndOfFile");
-	message += checkTestingFunction(testFailNumberIntegerPart, correctTests, incorrectTests, "testFailNumberIntegerPart");
-	message += checkTestingFunction(testFailNumberDecimalPartUnexpectedEndOfLine, correctTests, incorrectTests, "testFailNumberDecimalPartUnexpectedEndOfLine");
-	message += checkTestingFunction(testFailNumberDecimalPartUnexpectedCharacter, correctTests, incorrectTests, "testFailNumberDecimalPartUnexpectedCharacter");
+	message += CHECK_TESTING_FUNCTION(testParseObjectName1, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testParseObjectName2, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailParseObjectNameUnexpectedEndOfFile, correctTests, incorrectTests);
+
+	message += CHECK_TESTING_FUNCTION(testParseNumberInteger1, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testParseNumberInteger2, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testParseNumberDecimal1, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testParseNumberDecimal2, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testParseNumberIntegerAndDecimal1, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testParseNumberIntegerAndDecimal2, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailParseNumberUnexpectedEndOfFile, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailNumberIntegerPart, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailNumberDecimalPartUnexpectedEndOfLine, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailNumberDecimalPartUnexpectedCharacter, correctTests, incorrectTests);
 
 	cout << "Correct tests: " << correctTests << endl;
 	cout << "Incorrect tests: " << incorrectTests << endl;
