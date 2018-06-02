@@ -41,6 +41,16 @@ bool testFailObjectToken2();
 bool testIsObjectTokenTrue();
 bool testIsObjectTokenFalse();
 
+//Description tests
+bool testParseDescriptionToken1();
+bool testParseDescriptionToken2();
+bool testParseDescriptionToken3();
+bool testFailParseDescriptionTokenUnexpectedEndOfFile();
+bool testFailDescriptionToken1();
+bool testFailDescriptionToken2();
+bool testIsDescriptionTokenTrue();
+bool testIsDescriptionTokenFalse();
+
 bool testParseObjectName1();
 bool testParseObjectName2();
 bool testFailParseObjectNameUnexpectedEndOfFile();
@@ -90,6 +100,15 @@ int main() {
 	message += CHECK_TESTING_FUNCTION(testFailObjectToken2, correctTests, incorrectTests);
 	message += CHECK_TESTING_FUNCTION(testIsObjectTokenTrue, correctTests, incorrectTests);
 	message += CHECK_TESTING_FUNCTION(testIsObjectTokenFalse, correctTests, incorrectTests);
+
+	message += CHECK_TESTING_FUNCTION(testParseDescriptionToken1, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testParseDescriptionToken2, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testParseDescriptionToken3, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailParseDescriptionTokenUnexpectedEndOfFile, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailDescriptionToken1, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailDescriptionToken2, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testIsDescriptionTokenTrue, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testIsDescriptionTokenFalse, correctTests, incorrectTests);
 
 	message += CHECK_TESTING_FUNCTION(testParseObjectName1, correctTests, incorrectTests);
 	message += CHECK_TESTING_FUNCTION(testParseObjectName2, correctTests, incorrectTests);
@@ -489,6 +508,121 @@ bool testIsObjectTokenFalse() {
 	Parser parser = Parser(strings);
 
 	return !parser.isObjectToken();
+}
+/******************************/
+//Description tests
+/******************************/
+bool testParseDescriptionToken1() {
+	vector<string> strings = vector<string>();
+	strings.push_back("  ");
+	strings.push_back("    description");
+	Parser parser = Parser(strings);
+	try {
+		parser.parseDescriptionToken();
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+	return true;
+}
+
+bool testParseDescriptionToken2() {
+	vector<string> strings = vector<string>();
+	strings.push_back("  ");
+	strings.push_back("    Description:");
+	Parser parser = Parser(strings);
+	try {
+		parser.parseDescriptionToken();
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+	return true;
+}
+
+bool testParseDescriptionToken3() {
+	vector<string> strings = vector<string>();
+	strings.push_back("  ");
+	strings.push_back("    Description  ");
+	Parser parser = Parser(strings);
+	try {
+		parser.parseDescriptionToken();
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+	return true;
+}
+
+bool testFailParseDescriptionTokenUnexpectedEndOfFile() {
+	vector<string> strings = vector<string>();
+	strings.push_back("  ");
+	strings.push_back("    ");
+	Parser parser = Parser(strings);
+	try {
+		parser.parseDescriptionToken();
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::UnexpectedEndOfFileError << " Line: " << 1 << ", Position: " << 1 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+	return false;
+}
+
+bool testFailDescriptionToken1() {
+	vector<string> strings = vector<string>();
+	strings.push_back("  ");
+	strings.push_back("    desc");
+	Parser parser = Parser(strings);
+	try {
+		parser.parseDescriptionToken();
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::DescriptionTokenExpectedError << " Line: " << 2 << ", Position: " << 5 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+	return false;
+}
+bool testFailDescriptionToken2() {
+	vector<string> strings = vector<string>();
+	strings.push_back("  ");
+	strings.push_back("    DescriptionA");
+	Parser parser = Parser(strings);
+	try {
+		parser.parseDescriptionToken();
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::DescriptionTokenExpectedError << " Line: " << 2 << ", Position: " << 5 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+	return false;
+}
+
+bool testIsDescriptionTokenTrue() {
+	vector<string> strings = vector<string>();
+	strings.push_back("     ");
+	strings.push_back("   deScriPtion :");
+	Parser parser = Parser(strings);
+
+	return parser.isDescriptionToken();
+}
+
+bool testIsDescriptionTokenFalse() {
+	vector<string> strings = vector<string>();
+	strings.push_back("     ");
+	strings.push_back("   des ");
+	Parser parser = Parser(strings);
+
+	return !parser.isDescriptionToken();
 }
 
 bool testParseObjectName1() {
