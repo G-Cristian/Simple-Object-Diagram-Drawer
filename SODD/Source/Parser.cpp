@@ -32,6 +32,7 @@ namespace prsr {
 	const string Parser::SemicolonExpectedError = "';' expected.";
 	const string Parser::ObjectTokenExpectedError = "'Object' expected.";
 	const string Parser::DescriptionTokenExpectedError = "'Description' expected.";
+	const string Parser::RadiusTokenExpectedError = "'Radius' expected.";
 	const string Parser::NumberExpectedError = "Number expected.";
 	const string Parser::OpeningBraceExpectedError = "'{' expected.";
 	const string Parser::ClosingBraceExpectedError = "'}' expected.";
@@ -83,18 +84,13 @@ namespace prsr {
 			throw ParserException(tokenStartLine + 1, tokenStartPosition + 1, errorMessageIfNotExpectedToken);
 	}
 
-	void Parser::parseObjectToken() {
-		char delimiters[] = { ' ' };
-		parseToken("OBJECT", set<char>(delimiters, delimiters + 1),ObjectTokenExpectedError);
-	}
-
-	bool Parser::isObjectToken() {
+	bool Parser::isToken(function<void()> tokenParsingFunction) {
 		int previousLine = _currentLine;
 		int previousPosition = _currentPosition;
 		bool result = true;
 
 		try {
-			parseObjectToken();
+			tokenParsingFunction();
 		}
 		catch (ParserException &e) {
 			result = false;
@@ -106,12 +102,14 @@ namespace prsr {
 		return result;
 	}
 
-	string Parser::parseObjectName() {
-		char delimiters[] = { ' ', '{' };
-		int tokenStartLine = _currentLine;
-		int tokenStartPosition = _currentPosition;
+	void Parser::parseObjectToken() {
+		char delimiters[] = { ' ' };
+		parseToken("OBJECT", set<char>(delimiters, delimiters + 1),ObjectTokenExpectedError);
+	}
 
-		return readToken(set<char>(delimiters, delimiters + 2), tokenStartLine, tokenStartPosition);
+	bool Parser::isObjectToken() {
+		function<void()> p = [this]() {this->parseObjectToken();};
+		return (isToken(p));
 	}
 
 	void Parser::parseDescriptionToken() {
@@ -120,21 +118,28 @@ namespace prsr {
 	}
 
 	bool Parser::isDescriptionToken() {
-		int previousLine = _currentLine;
-		int previousPosition = _currentPosition;
-		int result = true;
+		function<void()> p = [this]() {this->parseDescriptionToken();};
+		return (isToken(p));
+	}
 
-		try {
-			parseDescriptionToken();
-		}
-		catch (ParserException &e) {
-			result = false;
-		}
-		
-		_currentLine = previousLine;
-		_currentPosition = previousPosition;
+	void Parser::parseRadiusToken()
+	{
+		char delimiters[] = { ' ', ':' };
+		parseToken("RADIUS", set<char>(delimiters, delimiters + 2), RadiusTokenExpectedError);
+	}
 
-		return result;
+	bool Parser::isRadiusToken()
+	{
+		function<void()> p = [this]() {this->parseRadiusToken();};
+		return (isToken(p));
+	}
+
+	string Parser::parseObjectName() {
+		char delimiters[] = { ' ', '{' };
+		int tokenStartLine = _currentLine;
+		int tokenStartPosition = _currentPosition;
+
+		return readToken(set<char>(delimiters, delimiters + 2), tokenStartLine, tokenStartPosition);
 	}
 
 	string Parser::parseString() {

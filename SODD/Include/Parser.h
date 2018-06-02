@@ -6,6 +6,7 @@
 #include <map>
 #include <set>
 #include <exception>
+#include <functional>
 
 #include "graphdrawer.h"
 
@@ -37,6 +38,7 @@ namespace prsr {
 		const static string SemicolonExpectedError;
 		const static string ObjectTokenExpectedError;
 		const static string DescriptionTokenExpectedError;
+		const static string RadiusTokenExpectedError;
 		const static string NumberExpectedError;
 		const static string OpeningBraceExpectedError;
 		const static string ClosingBraceExpectedError;
@@ -49,11 +51,14 @@ namespace prsr {
 		//gd::Node parseObject();
 		string readToken(const set<char> &delimiters, int &outTokenStartLine, int &outTokenStartPosition);
 		void parseToken(const string &expectedToken, const set<char> &delimiters, const string &errorMessageIfNotExpectedToken);
+		bool isToken(function<void()> tokenParsingFunction);
 		void parseObjectToken();
 		bool isObjectToken();
-		string parseObjectName();
 		void parseDescriptionToken();
 		bool isDescriptionToken();
+		void parseRadiusToken();
+		bool isRadiusToken();
+		string parseObjectName();
 		string parseString();
 		double parseNumber();
 		void parseSingleCharToken(char expectedChar, const string &errorMessageIfNotExpectedChar);

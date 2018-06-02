@@ -41,7 +41,7 @@ bool testFailObjectToken2();
 bool testIsObjectTokenTrue();
 bool testIsObjectTokenFalse();
 
-//Description tests
+//Description token tests
 bool testParseDescriptionToken1();
 bool testParseDescriptionToken2();
 bool testParseDescriptionToken3();
@@ -50,6 +50,16 @@ bool testFailDescriptionToken1();
 bool testFailDescriptionToken2();
 bool testIsDescriptionTokenTrue();
 bool testIsDescriptionTokenFalse();
+
+//Radius token tests
+bool testParseRadiusToken1();
+bool testParseRadiusToken2();
+bool testParseRadiusToken3();
+bool testFailParseRadiusTokenUnexpectedEndOfFile();
+bool testFailRadiusToken1();
+bool testFailRadiusToken2();
+bool testIsRadiusTokenTrue();
+bool testIsRadiusTokenFalse();
 
 bool testParseObjectName1();
 bool testParseObjectName2();
@@ -101,6 +111,7 @@ int main() {
 	message += CHECK_TESTING_FUNCTION(testIsObjectTokenTrue, correctTests, incorrectTests);
 	message += CHECK_TESTING_FUNCTION(testIsObjectTokenFalse, correctTests, incorrectTests);
 
+	//Description token tests
 	message += CHECK_TESTING_FUNCTION(testParseDescriptionToken1, correctTests, incorrectTests);
 	message += CHECK_TESTING_FUNCTION(testParseDescriptionToken2, correctTests, incorrectTests);
 	message += CHECK_TESTING_FUNCTION(testParseDescriptionToken3, correctTests, incorrectTests);
@@ -109,7 +120,18 @@ int main() {
 	message += CHECK_TESTING_FUNCTION(testFailDescriptionToken2, correctTests, incorrectTests);
 	message += CHECK_TESTING_FUNCTION(testIsDescriptionTokenTrue, correctTests, incorrectTests);
 	message += CHECK_TESTING_FUNCTION(testIsDescriptionTokenFalse, correctTests, incorrectTests);
+	
+	//Radius token tests
+	message += CHECK_TESTING_FUNCTION(testParseRadiusToken1, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testParseRadiusToken2, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testParseRadiusToken3, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailParseRadiusTokenUnexpectedEndOfFile, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailRadiusToken1, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testFailRadiusToken2, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testIsRadiusTokenTrue, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testIsRadiusTokenFalse, correctTests, incorrectTests);
 
+	//Object name tests
 	message += CHECK_TESTING_FUNCTION(testParseObjectName1, correctTests, incorrectTests);
 	message += CHECK_TESTING_FUNCTION(testParseObjectName2, correctTests, incorrectTests);
 	message += CHECK_TESTING_FUNCTION(testFailParseObjectNameUnexpectedEndOfFile, correctTests, incorrectTests);
@@ -510,7 +532,7 @@ bool testIsObjectTokenFalse() {
 	return !parser.isObjectToken();
 }
 /******************************/
-//Description tests
+//Description token tests
 /******************************/
 bool testParseDescriptionToken1() {
 	vector<string> strings = vector<string>();
@@ -624,7 +646,124 @@ bool testIsDescriptionTokenFalse() {
 
 	return !parser.isDescriptionToken();
 }
+/******************************/
+//Radius token tests
+/******************************/
+bool testParseRadiusToken1() {
+	vector<string> strings = vector<string>();
+	strings.push_back("  ");
+	strings.push_back("    Radius");
+	Parser parser = Parser(strings);
+	try {
+		parser.parseRadiusToken();
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+	return true;
+}
 
+bool testParseRadiusToken2() {
+	vector<string> strings = vector<string>();
+	strings.push_back("  ");
+	strings.push_back("    Radius:");
+	Parser parser = Parser(strings);
+	try {
+		parser.parseRadiusToken();
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+	return true;
+}
+
+bool testParseRadiusToken3() {
+	vector<string> strings = vector<string>();
+	strings.push_back("  ");
+	strings.push_back("    Radius  ");
+	Parser parser = Parser(strings);
+	try {
+		parser.parseRadiusToken();
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+	return true;
+}
+
+bool testFailParseRadiusTokenUnexpectedEndOfFile() {
+	vector<string> strings = vector<string>();
+	strings.push_back("  ");
+	strings.push_back("    ");
+	Parser parser = Parser(strings);
+	try {
+		parser.parseRadiusToken();
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::UnexpectedEndOfFileError << " Line: " << 1 << ", Position: " << 1 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+	return false;
+}
+
+bool testFailRadiusToken1() {
+	vector<string> strings = vector<string>();
+	strings.push_back("  ");
+	strings.push_back("    rad");
+	Parser parser = Parser(strings);
+	try {
+		parser.parseRadiusToken();
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::RadiusTokenExpectedError << " Line: " << 2 << ", Position: " << 5 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+	return false;
+}
+bool testFailRadiusToken2() {
+	vector<string> strings = vector<string>();
+	strings.push_back("  ");
+	strings.push_back("    Radis");
+	Parser parser = Parser(strings);
+	try {
+		parser.parseRadiusToken();
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::RadiusTokenExpectedError << " Line: " << 2 << ", Position: " << 5 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+	return false;
+}
+
+bool testIsRadiusTokenTrue() {
+	vector<string> strings = vector<string>();
+	strings.push_back("     ");
+	strings.push_back("   RadiUs :");
+	Parser parser = Parser(strings);
+
+	return parser.isRadiusToken();
+}
+
+bool testIsRadiusTokenFalse() {
+	vector<string> strings = vector<string>();
+	strings.push_back("     ");
+	strings.push_back("   rad ");
+	Parser parser = Parser(strings);
+
+	return !parser.isRadiusToken();
+}
+/***********************/
+//Object name tests
+/***********************/
 bool testParseObjectName1() {
 	vector<string> strings = vector<string>();
 	strings.push_back("  ");
