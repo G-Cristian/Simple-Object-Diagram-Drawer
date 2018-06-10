@@ -21,6 +21,8 @@ namespace gd {
 		Node(float radius, string text);
 		~Node();
 
+		inline bool operator==(const Node &other) const { return _radius == other._radius && _text == other._text; }
+
 		inline float getRadius() const;
 		inline string getText() const;
 	private:

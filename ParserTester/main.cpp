@@ -1,9 +1,12 @@
 #include <iostream>
 #include <vector>
 #include <string>
+//#include <utility>
+//#include <memory>
 
 #include "../SODD/Include/Parser.h"
 #include "../SODD/Include/ParserNodeProperty.h"
+//#include "../SODD/Include/graphdrawer.h"
 
 
 using namespace std;
@@ -94,6 +97,9 @@ bool testFailParseRadiusPropertyMissingSemicolon2();
 bool testFailParseRadiusPropertyMissingColon();
 bool testFailParseRadiusPropertyNumberExpected();
 
+//Object test
+bool testParseObjectOk();
+
 int main() {
 	int correctTests = 0;
 	int incorrectTests = 0;
@@ -180,6 +186,9 @@ int main() {
 	message += CHECK_TESTING_FUNCTION(testFailParseRadiusPropertyMissingSemicolon2, correctTests, incorrectTests);
 	message += CHECK_TESTING_FUNCTION(testFailParseRadiusPropertyMissingColon, correctTests, incorrectTests);
 	message += CHECK_TESTING_FUNCTION(testFailParseRadiusPropertyNumberExpected, correctTests, incorrectTests);
+
+	//Object test
+	message += CHECK_TESTING_FUNCTION(testParseObjectOk, correctTests, incorrectTests);
 
 	cout << "Correct tests: " << correctTests << endl;
 	cout << "Incorrect tests: " << incorrectTests << endl;
@@ -1231,4 +1240,29 @@ bool testFailParseRadiusPropertyNumberExpected() {
 		return errorMsg == expectedError.str();
 	}
 	return false;
+}
+
+//Object test
+bool testParseObjectOk() {
+	vector<string> strings = vector<string>();
+	shared_ptr< pair<string, gd::Node> > result = nullptr;
+	strings.push_back("  ");
+	strings.push_back(" obJect ");
+	strings.push_back(" anObject ");
+	strings.push_back(" { ");
+	strings.push_back("  Radius  ");
+	strings.push_back("  :  0120.01020; ");
+	strings.push_back(" descripTion :  \"desc 1\" ");
+	strings.push_back(" ; ");
+	strings.push_back(" } ");
+
+	Parser parser = Parser(strings);
+	try {
+		result = make_shared< pair<string, gd::Node> >(parser.parseObject());
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+
+	return *result == pair<string, gd::Node>("ANOBJECT", gd::Node(120.0102, "desc 1"));
 }

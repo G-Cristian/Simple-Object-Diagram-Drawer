@@ -1,9 +1,13 @@
 #include "../Include/Parser.h"
+#include <string>
 #include <cctype>
 #include <memory>
+#include <utility>
 #include "../Include/ParserNodeProperty.h"
+#include "../Include/graphdrawer.h"
 
 using namespace std;
+using namespace gd;
 
 namespace prsr {
 
@@ -54,8 +58,43 @@ namespace prsr {
 
 	}
 
-	shared_ptr<ParserNodeDescriptionProperty> Parser::parseDescriptionProperty()
+	pair<string, gd::Node> Parser::parseObject() {
+		parseObjectToken();
+		string name = parseObjectName();
+		parseOpeningBrace();
+		NodeProperties properties = parseProperties();
+		parseClosingBrace();
+
+		return pair<string, gd::Node>(name, gd::Node(properties.radius, properties.description));
+	}
+
+	NodeProperties Parser::parseProperties() {
+		NodeProperties properties = { "", 0.0 };
+		bool isValidProperty = true;
+		while (isValidProperty) {
+			shared_ptr<AbstractParserNodeProperty> property = parseProperty();
+			property->setThisPropertyToNodeProperty(properties);
+			isValidProperty = property->isValidProperty();
+		}
+
+		return properties;
+	}
+
+	shared_ptr<AbstractParserNodeProperty> Parser::parseProperty()
 	{
+		shared_ptr<AbstractParserNodeProperty> property = make_shared<ParserNodeInvalidProperty>(ParserNodeInvalidProperty());
+
+		if (isDescriptionToken()) {
+			property = parseDescriptionProperty();
+		}
+		else if (isRadiusToken()) {
+			property = parseRadiusProperty();
+		}
+
+		return property;
+	}
+	
+	shared_ptr<ParserNodeDescriptionProperty> Parser::parseDescriptionProperty() {
 		parseDescriptionToken();
 		parseColon();
 		string description = parseString();
@@ -63,8 +102,7 @@ namespace prsr {
 		return make_shared<ParserNodeDescriptionProperty>(description);
 	}
 
-	shared_ptr<ParserNodeRadiusProperty> Parser::parseRadiusProperty()
-	{
+	shared_ptr<ParserNodeRadiusProperty> Parser::parseRadiusProperty() {
 		parseRadiusToken();
 		parseColon();
 		double radius = parseNumber();

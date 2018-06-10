@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <utility>
 #include <map>
 #include <set>
 #include <exception>
@@ -57,7 +58,9 @@ namespace prsr {
 		~Parser();
 
 		//Graph parseGraph();
-		//gd::Node parseObject();
+		pair<string, gd::Node> parseObject();
+		NodeProperties parseProperties();
+		shared_ptr<AbstractParserNodeProperty> parseProperty();
 		shared_ptr<ParserNodeDescriptionProperty> parseDescriptionProperty();
 		shared_ptr<ParserNodeRadiusProperty> parseRadiusProperty();
 		string readToken(const set<char> &delimiters, int &outTokenStartLine, int &outTokenStartPosition);
