@@ -1,17 +1,19 @@
-#include "../Include/Parser.h"
-#include <string>
-#include <cctype>
-#include <memory>
-#include <utility>
-#include "../Include/ParserNodeProperty.h"
 #include "../Include/graphdrawer.h"
+#include "../Include/Parser.h"
+#include "../Include/ParserNodeProperty.h"
+#include <cctype>
+#include <list>
+#include <memory>
+#include <string>
+#include <utility>
+#include "..\Include\Parser.h"
 
 using namespace std;
 using namespace gd;
 
 namespace prsr {
 
-	ParserException::ParserException(int line, int position, string msg) {
+	ParserException::ParserException(int line, int position, const string &msg) {
 		_line = line;
 		_position = position;
 		_msg = msg;
@@ -42,6 +44,7 @@ namespace prsr {
 	const string Parser::NumberExpectedError = "Number expected.";
 	const string Parser::OpeningBraceExpectedError = "'{' expected.";
 	const string Parser::ClosingBraceExpectedError = "'}' expected.";
+	const string Parser::ObjectNameAlreadyExistError = "Object name already exist.";
 
 	Parser::Parser(const vector<string> &text):Parser(text, 0, 0){
 	}
@@ -56,6 +59,19 @@ namespace prsr {
 
 	Parser::~Parser() {
 
+	}
+
+	vector<gd::Node> Parser::parseObjects()
+	{
+		list<gd::Node> nodes;
+		int currentNodeIndex = 0;
+		while (isObjectToken()) {
+			pair<string, gd::Node> pairObjectNameNode = parseObject();
+			insertNodeIntoOutList(pairObjectNameNode.first, pairObjectNameNode.second, currentNodeIndex, nodes);
+			currentNodeIndex++;
+		}
+
+		return { nodes.begin(), nodes.end() };
 	}
 
 	pair<string, gd::Node> Parser::parseObject() {
@@ -293,6 +309,16 @@ namespace prsr {
 	//'c' should be a number.
 	inline int Parser::charNumberToInt(char c) const {
 		return c - '0';
+	}
+
+	void Parser::insertNodeIntoOutList(string name, gd::Node node, int currentNodeIndex, list<gd::Node>& outList) {
+		auto ret = _nodeIndexPerObjectName.insert(pair<string, int>(name, currentNodeIndex));
+		if (!ret.second) {
+			throw ParserException(_currentLine + 1, _currentPosition + 1, ObjectNameAlreadyExistError + "(" + ret.first->first + ")");
+		}
+		else {
+			outList.push_back(node);
+		}
 	}
 
 	void Parser::parseSingleCharToken(char expectedChar, const string &errorMessageIfNotExpectedChar) {

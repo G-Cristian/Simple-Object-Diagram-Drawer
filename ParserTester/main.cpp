@@ -100,6 +100,13 @@ bool testFailParseRadiusPropertyNumberExpected();
 //Object test
 bool testParseObjectOk();
 
+//Objects test
+bool testParseObjectsOk();
+bool testParseObjectsRepetedObjectName();
+bool testParseObjectsExpectedClosingBraceError();
+bool testParseObjectsUnexpectedEndOfFileError1();
+bool testParseObjectsUnexpectedEndOfFileError2();
+
 int main() {
 	int correctTests = 0;
 	int incorrectTests = 0;
@@ -189,6 +196,13 @@ int main() {
 
 	//Object test
 	message += CHECK_TESTING_FUNCTION(testParseObjectOk, correctTests, incorrectTests);
+
+	//Objects test
+	message += CHECK_TESTING_FUNCTION(testParseObjectsOk, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testParseObjectsRepetedObjectName, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testParseObjectsExpectedClosingBraceError, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testParseObjectsUnexpectedEndOfFileError1, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testParseObjectsUnexpectedEndOfFileError2, correctTests, incorrectTests);
 
 	cout << "Correct tests: " << correctTests << endl;
 	cout << "Incorrect tests: " << incorrectTests << endl;
@@ -1265,4 +1279,157 @@ bool testParseObjectOk() {
 	}
 
 	return *result == pair<string, gd::Node>("ANOBJECT", gd::Node(120.0102, "desc 1"));
+}
+
+//Objects test
+bool testParseObjectsOk() {
+	vector<string> strings = vector<string>();
+	vector<gd::Node> result;
+	strings.push_back("  ");
+	strings.push_back(" obJect ");
+	strings.push_back(" anObject ");
+	strings.push_back(" { ");
+	strings.push_back("  Radius  ");
+	strings.push_back("  :  0120.01020; ");
+	strings.push_back(" descripTion :  \"desc 1\" ");
+	strings.push_back(" ; ");
+	strings.push_back(" } object otherObject{");
+	strings.push_back("");
+	strings.push_back(" ");
+	strings.push_back("}");
+
+	Parser parser = Parser(strings);
+	try {
+		result = parser.parseObjects();
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+
+	return result.size() == 2 && result[0] == gd::Node(0120.01020f,"desc 1") && result[1] == gd::Node(0, "");
+}
+
+bool testParseObjectsRepetedObjectName() {
+	vector<string> strings = vector<string>();
+	vector<gd::Node> result;
+	strings.push_back("  ");
+	strings.push_back(" obJect ");
+	strings.push_back(" anObject ");
+	strings.push_back(" { ");
+	strings.push_back("  Radius  ");
+	strings.push_back("  :  0120.01020; ");
+	strings.push_back(" descripTion :  \"desc 1\" ");
+	strings.push_back(" ; ");
+	strings.push_back(" } ");
+	strings.push_back(" object ANobJect ");
+	strings.push_back("");
+	strings.push_back(" { ");
+	strings.push_back("}");
+
+	Parser parser = Parser(strings);
+	try {
+		result = parser.parseObjects();
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::ObjectNameAlreadyExistError << "(ANOBJECT)" << " Line: " << 13 << ", Position: " << 2 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+
+	return false;
+}
+
+bool testParseObjectsExpectedClosingBraceError() {
+	vector<string> strings = vector<string>();
+	vector<gd::Node> result;
+	strings.push_back("  ");
+	strings.push_back(" obJect ");
+	strings.push_back(" anObject ");
+	strings.push_back(" { ");
+	strings.push_back("  Radius  ");
+	strings.push_back("  :  0120.01020; ");
+	strings.push_back(" descripTion :  \"desc 1\" ");
+	strings.push_back(" ; ");
+	strings.push_back(" } object otherObject{");
+	strings.push_back("");
+	strings.push_back(" ;");
+	strings.push_back("}");
+
+	Parser parser = Parser(strings);
+	try {
+		result = parser.parseObjects();
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::ClosingBraceExpectedError << " Line: " << 11 << ", Position: " << 2 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+
+	return false;
+}
+
+bool testParseObjectsUnexpectedEndOfFileError1() {
+	vector<string> strings = vector<string>();
+	vector<gd::Node> result;
+	strings.push_back("  ");
+	strings.push_back(" obJect ");
+	strings.push_back(" anObject ");
+	strings.push_back(" { ");
+	strings.push_back("  Radius  ");
+	strings.push_back("  :  0120.01020; ");
+	strings.push_back(" descripTion :  \"desc 1\" ");
+	strings.push_back(" ; ");
+	strings.push_back(" } object otherObject{");
+	strings.push_back("Radius:1.2;");
+	strings.push_back(" ");
+	strings.push_back("");
+
+	Parser parser = Parser(strings);
+	try {
+		result = parser.parseObjects();
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::UnexpectedEndOfFileError << " Line: " << 10 << ", Position: " << 12 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+
+	return false;
+}
+
+bool testParseObjectsUnexpectedEndOfFileError2() {
+	vector<string> strings = vector<string>();
+	vector<gd::Node> result;
+	strings.push_back("  ");
+	strings.push_back(" obJect ");
+	strings.push_back(" anObject ");
+	strings.push_back(" { ");
+	strings.push_back("  Radius  ");
+	strings.push_back("  :  0120.01020; ");
+	strings.push_back(" descripTion :  \"desc 1\" ");
+	strings.push_back(" ; ");
+	strings.push_back(" } object otherObject{");
+	strings.push_back("");
+	strings.push_back(" ");
+	strings.push_back("");
+
+	Parser parser = Parser(strings);
+	try {
+		result = parser.parseObjects();
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::UnexpectedEndOfFileError << " Line: " << 9 << ", Position: " << 23 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+
+	return false;
 }

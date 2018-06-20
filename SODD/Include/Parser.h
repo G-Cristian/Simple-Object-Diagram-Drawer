@@ -22,7 +22,7 @@ namespace prsr {
 
 	class ParserException : public exception {
 	public:
-		ParserException(int line, int position, string msg);
+		ParserException(int line, int position, const string &msg);
 		~ParserException();
 
 		virtual const char* what() const throw();
@@ -52,12 +52,14 @@ namespace prsr {
 		const static string NumberExpectedError;
 		const static string OpeningBraceExpectedError;
 		const static string ClosingBraceExpectedError;
+		const static string ObjectNameAlreadyExistError;
 
 		Parser(const vector<string> &text);
 		Parser(const vector<string> &text, int line, int position);
 		~Parser();
 
 		//Graph parseGraph();
+		vector<gd::Node> parseObjects();
 		pair<string, gd::Node> parseObject();
 		NodeProperties parseProperties();
 		shared_ptr<AbstractParserNodeProperty> parseProperty();
@@ -91,6 +93,7 @@ namespace prsr {
 		double parseDecimalPart();
 		inline bool isNumeric(char c) const;
 		inline int charNumberToInt(char c) const;
+		void insertNodeIntoOutList(string name, gd::Node node, int currentNodeIndex, list<gd::Node> &outList);
 
 		vector<string> _text;
 		int _currentLine;
