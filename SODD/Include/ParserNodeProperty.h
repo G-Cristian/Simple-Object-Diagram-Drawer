@@ -22,7 +22,7 @@ namespace prsr {
 		virtual ~ParserNodeDescriptionProperty() {}
 
 		void setThisPropertyToNodeProperty(NodeProperties& outNodeProperty) const override final { outNodeProperty.description = _description; }
-		bool isValidProperty() const override { return true; }
+		bool isValidProperty() const override final { return true; }
 	private:
 		string _description;
 	};
@@ -33,7 +33,7 @@ namespace prsr {
 		virtual ~ParserNodeRadiusProperty() {}
 
 		void setThisPropertyToNodeProperty(NodeProperties& outNodeProperty) const override final { outNodeProperty.radius = _radius; }
-		bool isValidProperty() const override { return true; }
+		bool isValidProperty() const override final { return true; }
 	private:
 		double _radius;
 	};
@@ -43,8 +43,8 @@ namespace prsr {
 		ParserNodeInvalidProperty() { }
 		virtual ~ParserNodeInvalidProperty() {}
 
-		void setThisPropertyToNodeProperty(NodeProperties& outNodeProperty) const override { }
-		bool isValidProperty() const override { return false; }
+		void setThisPropertyToNodeProperty(NodeProperties& outNodeProperty) const override final { }
+		bool isValidProperty() const override final { return false; }
 	};
 }
 
