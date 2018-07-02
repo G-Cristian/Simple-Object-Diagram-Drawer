@@ -19,6 +19,9 @@ namespace prsr {
 	class AbstractParserNodeProperty;
 	class ParserNodeDescriptionProperty;
 	class ParserNodeRadiusProperty;
+	class AbstractParserNodeConnectivity;
+	class ParserNodeNormalConnectivity;
+	class ParserNodeDashedConnectivity;
 
 	class ParserException : public exception {
 	public:
@@ -52,6 +55,10 @@ namespace prsr {
 		const static string NumberExpectedError;
 		const static string OpeningBraceExpectedError;
 		const static string ClosingBraceExpectedError;
+		const static string HyphenSymbolExpectedError;
+		const static string EqualSymbolExpectedError;
+		const static string GreaterThanSymbolExpectedError;
+		const static string ConnectivitySymbolExpectedError;
 		const static string ObjectNameAlreadyExistError;
 
 		Parser(const vector<string> &text);
@@ -65,6 +72,11 @@ namespace prsr {
 		shared_ptr<AbstractParserNodeProperty> parseProperty();
 		shared_ptr<ParserNodeDescriptionProperty> parseDescriptionProperty();
 		shared_ptr<ParserNodeRadiusProperty> parseRadiusProperty();
+		unique_ptr<AbstractParserNodeConnectivity> parseConnectivitySymbol();
+		unique_ptr<ParserNodeNormalConnectivity> parseNormalConnectivitySymbol();
+		bool isNormalConnectivitySymbol();
+		unique_ptr<ParserNodeDashedConnectivity> parseDashedConnectivitySymbol();
+		bool isDashedConnectivitySymbol();
 		string readToken(const set<char> &delimiters, int &outTokenStartLine, int &outTokenStartPosition);
 		void parseToken(const string &expectedToken, const set<char> &delimiters, const string &errorMessageIfNotExpectedToken);
 		bool isToken(function<void()> tokenParsingFunction);
@@ -77,8 +89,8 @@ namespace prsr {
 		string parseObjectName();
 		string parseString();
 		double parseNumber();
-		void parseSingleCharToken(char expectedChar, const string &errorMessageIfNotExpectedChar);
-		bool isSingleCharToken(char expectedChar);
+		void parseSingleCharToken(char expectedChar, bool shouldSkipSpacesAndNewLine, const string &errorMessageIfNotExpectedChar);
+		bool isSingleCharToken(char expectedChar, bool shouldSkipSpacesAndNewLine);
 		void parseColon();
 		bool isColon();
 		void parseSemicolon();
@@ -86,6 +98,12 @@ namespace prsr {
 		void parseOpeningBrace();
 		void parseClosingBrace();
 		bool isClosingBrace();
+		void parseHyphen();
+		bool isHyphen();
+		void parseEqual();
+		bool isEqual();
+		void parseGreaterThan();
+		bool isGreaterThan();
 	private:
 		//returns 'true' if end of text.
 		bool skipSpacesAndNewLine();

@@ -1,6 +1,7 @@
 #include "../Include/graphdrawer.h"
 #include "../Include/Parser.h"
 #include "../Include/ParserNodeProperty.h"
+#include "../Include/ParserNodeConnectivity.h"
 #include <cctype>
 #include <list>
 #include <memory>
@@ -44,6 +45,10 @@ namespace prsr {
 	const string Parser::NumberExpectedError = "Number expected.";
 	const string Parser::OpeningBraceExpectedError = "'{' expected.";
 	const string Parser::ClosingBraceExpectedError = "'}' expected.";
+	const string Parser::HyphenSymbolExpectedError = "'-' expected.";
+	const string Parser::EqualSymbolExpectedError = "'=' expected.";
+	const string Parser::GreaterThanSymbolExpectedError = "'>' expected.";
+	const string Parser::ConnectivitySymbolExpectedError = "Connectivity symbol expected ('->' for normal connectivity or '=>' for dashed connectivity).";
 	const string Parser::ObjectNameAlreadyExistError = "Object name already exist.";
 
 	Parser::Parser(const vector<string> &text):Parser(text, 0, 0){
@@ -124,6 +129,47 @@ namespace prsr {
 		double radius = parseNumber();
 		parseSemicolon();
 		return make_shared<ParserNodeRadiusProperty>(radius);
+	}
+
+	unique_ptr<AbstractParserNodeConnectivity> Parser::parseConnectivitySymbol() {
+		unique_ptr<AbstractParserNodeConnectivity> connectivitySymbol;
+		if (isNormalConnectivitySymbol()) {
+			connectivitySymbol = parseNormalConnectivitySymbol();
+		}
+		else if (isDashedConnectivitySymbol()) {
+			connectivitySymbol = parseDashedConnectivitySymbol();
+		}
+		else {
+			throw ParserException(_currentLine + 1, _currentPosition + 1, ConnectivitySymbolExpectedError);
+		}
+
+		return connectivitySymbol;
+	}
+
+	unique_ptr<ParserNodeNormalConnectivity> Parser::parseNormalConnectivitySymbol()
+	{
+		parseHyphen();
+		parseGreaterThan();
+		return unique_ptr<ParserNodeNormalConnectivity>(new ParserNodeNormalConnectivity());
+	}
+
+	bool Parser::isNormalConnectivitySymbol()
+	{
+		function<void()> p = [this]() {this->parseNormalConnectivitySymbol();};
+		return (isToken(p));
+	}
+
+	unique_ptr<ParserNodeDashedConnectivity> Parser::parseDashedConnectivitySymbol()
+	{
+		parseEqual();
+		parseGreaterThan();
+		return unique_ptr<ParserNodeDashedConnectivity>(new ParserNodeDashedConnectivity());
+	}
+
+	bool Parser::isDashedConnectivitySymbol()
+	{
+		function<void()> p = [this]() {this->parseDashedConnectivitySymbol();};
+		return (isToken(p));
 	}
 
 	//The returned string is in uppercase.
@@ -321,27 +367,34 @@ namespace prsr {
 		}
 	}
 
-	void Parser::parseSingleCharToken(char expectedChar, const string &errorMessageIfNotExpectedChar) {
+	void Parser::parseSingleCharToken(char expectedChar, bool shouldSkipSpacesAndNewLine, const string &errorMessageIfNotExpectedChar) {
 		int previousLine = _currentLine;
 		int previousPosition = _currentPosition;
-		if (skipSpacesAndNewLine())
+		bool unexpectedEndOfFile = (_currentLine >= _text.size());
+
+		if (!unexpectedEndOfFile && shouldSkipSpacesAndNewLine) {
+			unexpectedEndOfFile = skipSpacesAndNewLine();
+		}
+
+		if (unexpectedEndOfFile) {
 			throw ParserException(previousLine + 1, previousPosition + 1, UnexpectedEndOfFileError);
+		}
 
 		string line = _text[_currentLine];
 		size_t lineLength = line.length();
-		if (line[_currentPosition] != expectedChar)
+		if (_currentPosition >= lineLength || line[_currentPosition] != expectedChar)
 			throw ParserException(_currentLine + 1, _currentPosition + 1, errorMessageIfNotExpectedChar);
 
 		_currentPosition++;
 	}
 
-	bool Parser::isSingleCharToken(char expectedChar) {
+	bool Parser::isSingleCharToken(char expectedChar, bool shouldSkipSpacesAndNewLine) {
 		int previousLine = _currentLine;
 		int previousPosition = _currentPosition;
 		bool result = true;
 
 		try {
-			parseSingleCharToken(expectedChar, "");
+			parseSingleCharToken(expectedChar, shouldSkipSpacesAndNewLine, "");
 		}
 		catch (ParserException &e) {
 			result = false;
@@ -354,31 +407,55 @@ namespace prsr {
 	}
 
 	void Parser::parseColon() {
-		parseSingleCharToken(':', ColonExpectedError);
+		parseSingleCharToken(':', true, ColonExpectedError);
 	}
 
 	bool Parser::isColon() {
-		return isSingleCharToken(':');
+		return isSingleCharToken(':', true);
 	}
 
 	void Parser::parseSemicolon() {
-		parseSingleCharToken(';', SemicolonExpectedError);
+		parseSingleCharToken(';', true, SemicolonExpectedError);
 	}
 
 	bool Parser::isSemicolon() {
-		return isSingleCharToken(';');
+		return isSingleCharToken(';', true);
 	}
 
 	void Parser::parseOpeningBrace() {
-		parseSingleCharToken('{', OpeningBraceExpectedError);
+		parseSingleCharToken('{', true, OpeningBraceExpectedError);
 	}
 
 	void Parser::parseClosingBrace() {
-		parseSingleCharToken('}', ClosingBraceExpectedError);
+		parseSingleCharToken('}', true, ClosingBraceExpectedError);
 	}
 
 	bool Parser::isClosingBrace() {
-		return isSingleCharToken('}');
+		return isSingleCharToken('}', true);
+	}
+
+	void Parser::parseHyphen() {
+		parseSingleCharToken('-', true, HyphenSymbolExpectedError);
+	}
+
+	bool Parser::isHyphen() {
+		return isSingleCharToken('-', true);
+	}
+
+	void Parser::parseEqual() {
+		parseSingleCharToken('=', true, EqualSymbolExpectedError);
+	}
+
+	bool Parser::isEqual() {
+		return isSingleCharToken('=', true);
+	}
+
+	void Parser::parseGreaterThan() {
+		parseSingleCharToken('>', false, GreaterThanSymbolExpectedError);
+	}
+
+	bool Parser::isGreaterThan() {
+		return isSingleCharToken('>', false);
 	}
 
 	//returns 'true' if end of text.

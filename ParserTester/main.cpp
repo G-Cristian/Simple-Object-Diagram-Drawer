@@ -6,6 +6,7 @@
 
 #include "../SODD/Include/Parser.h"
 #include "../SODD/Include/ParserNodeProperty.h"
+#include "../SODD/Include/ParserNodeConnectivity.h"
 //#include "../SODD/Include/graphdrawer.h"
 
 
@@ -107,6 +108,18 @@ bool testParseObjectsExpectedClosingBraceError();
 bool testParseObjectsUnexpectedEndOfFileError1();
 bool testParseObjectsUnexpectedEndOfFileError2();
 
+//Connections test
+bool testParseNormalConnectivityOk();
+bool testParseDashedConnectivityOk();
+bool testParseNormalConnectivityExpectedGreaterSimbolError();
+bool testParseDashedConnectivityExpectedGreaterSimbolError();
+bool testParseNormalConnectivityButFoundDashedConnectivityError();
+bool testParseDashedConnectivityButFoundNormalConnectivityError();
+bool testIsNormalConnectivityOk();
+bool testIsDashedConnectivityOk();
+bool testIsNotNormalConnectivity();
+bool testIsNotDashedConnectivity();
+
 int main() {
 	int correctTests = 0;
 	int incorrectTests = 0;
@@ -203,6 +216,18 @@ int main() {
 	message += CHECK_TESTING_FUNCTION(testParseObjectsExpectedClosingBraceError, correctTests, incorrectTests);
 	message += CHECK_TESTING_FUNCTION(testParseObjectsUnexpectedEndOfFileError1, correctTests, incorrectTests);
 	message += CHECK_TESTING_FUNCTION(testParseObjectsUnexpectedEndOfFileError2, correctTests, incorrectTests);
+
+	//Connections test
+	message += CHECK_TESTING_FUNCTION(testParseNormalConnectivityOk, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testParseDashedConnectivityOk, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testParseNormalConnectivityExpectedGreaterSimbolError, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testParseDashedConnectivityExpectedGreaterSimbolError, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testParseNormalConnectivityButFoundDashedConnectivityError, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testParseDashedConnectivityButFoundNormalConnectivityError, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testIsNormalConnectivityOk, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testIsDashedConnectivityOk, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testIsNotNormalConnectivity, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testIsNotDashedConnectivity, correctTests, incorrectTests);
 
 	cout << "Correct tests: " << correctTests << endl;
 	cout << "Incorrect tests: " << incorrectTests << endl;
@@ -1432,4 +1457,189 @@ bool testParseObjectsUnexpectedEndOfFileError2() {
 	}
 
 	return false;
+}
+
+//Connections test
+bool testParseNormalConnectivityOk() {
+	vector<string> strings = vector<string>();
+	unique_ptr<AbstractParserNodeConnectivity> result;
+	strings.push_back("  ");
+	strings.push_back(" -> ");
+	strings.push_back("  ");
+
+	Parser parser = Parser(strings);
+	try {
+		result = parser.parseConnectivitySymbol();
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+
+	return dynamic_cast<ParserNodeNormalConnectivity *>(result.get()) != nullptr;
+}
+
+bool testParseDashedConnectivityOk() {
+	vector<string> strings = vector<string>();
+	unique_ptr<AbstractParserNodeConnectivity> result;
+	strings.push_back("  ");
+	strings.push_back(" => ");
+	strings.push_back("  ");
+
+	Parser parser = Parser(strings);
+	try {
+		result = parser.parseConnectivitySymbol();
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+
+	return dynamic_cast<ParserNodeDashedConnectivity *>(result.get()) != nullptr;
+}
+bool testParseNormalConnectivityExpectedGreaterSimbolError() {
+	vector<string> strings = vector<string>();
+	unique_ptr<AbstractParserNodeConnectivity> result;
+	strings.push_back("  ");
+	strings.push_back(" - > ");
+	strings.push_back("  ");
+
+	Parser parser = Parser(strings);
+	try {
+		result = parser.parseConnectivitySymbol();
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::ConnectivitySymbolExpectedError << " Line: " << 1 << ", Position: " << 1 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+
+	return false;
+}
+
+bool testParseDashedConnectivityExpectedGreaterSimbolError() {
+	vector<string> strings = vector<string>();
+	unique_ptr<AbstractParserNodeConnectivity> result;
+	strings.push_back("  ");
+	strings.push_back(" =");
+
+	Parser parser = Parser(strings);
+	try {
+		result = parser.parseConnectivitySymbol();
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::ConnectivitySymbolExpectedError << " Line: " << 1 << ", Position: " << 1 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+
+	return false;
+}
+
+bool testParseNormalConnectivityButFoundDashedConnectivityError() {
+	vector<string> strings = vector<string>();
+	unique_ptr<AbstractParserNodeConnectivity> result;
+	strings.push_back("  ");
+	strings.push_back(" => ");
+	strings.push_back("  ");
+
+	Parser parser = Parser(strings);
+	try {
+		result = parser.parseConnectivitySymbol();
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+
+	return dynamic_cast<ParserNodeNormalConnectivity *>(result.get()) == nullptr;
+}
+
+bool testParseDashedConnectivityButFoundNormalConnectivityError() {
+	vector<string> strings = vector<string>();
+	unique_ptr<AbstractParserNodeConnectivity> result;
+	strings.push_back("  ");
+	strings.push_back(" -> ");
+	strings.push_back("  ");
+
+	Parser parser = Parser(strings);
+	try {
+		result = parser.parseConnectivitySymbol();
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+
+	return dynamic_cast<ParserNodeDashedConnectivity *>(result.get()) == nullptr;
+}
+
+bool testIsNormalConnectivityOk() {
+	vector<string> strings = vector<string>();
+	bool result = false;
+	strings.push_back("  ");
+	strings.push_back(" -> ");
+	strings.push_back("  ");
+
+	Parser parser = Parser(strings);
+	try {
+		result = parser.isNormalConnectivitySymbol();
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+
+	return result;
+}
+
+bool testIsDashedConnectivityOk() {
+	vector<string> strings = vector<string>();
+	bool result = false;
+	strings.push_back("  ");
+	strings.push_back(" => ");
+	strings.push_back("  ");
+
+	Parser parser = Parser(strings);
+	try {
+		result = parser.isDashedConnectivitySymbol();
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+
+	return result;
+}
+
+bool testIsNotNormalConnectivity() {
+	vector<string> strings = vector<string>();
+	bool result = false;
+	strings.push_back("  ");
+	strings.push_back(" -");
+
+	Parser parser = Parser(strings);
+	try {
+		result = parser.isNormalConnectivitySymbol();
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+
+	return !result;
+}
+
+bool testIsNotDashedConnectivity() {
+	vector<string> strings = vector<string>();
+	bool result = false;
+	strings.push_back("  ");
+	strings.push_back(" ->");
+
+	Parser parser = Parser(strings);
+	try {
+		result = parser.isDashedConnectivitySymbol();
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+
+	return !result;
 }
