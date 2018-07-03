@@ -10,6 +10,7 @@
 #include <functional>
 #include <memory>
 
+#include "ConnectivityMatrix.h"
 #include "graphdrawer.h"
 
 using namespace std;
@@ -60,6 +61,7 @@ namespace prsr {
 		const static string GreaterThanSymbolExpectedError;
 		const static string ConnectivitySymbolExpectedError;
 		const static string ObjectNameAlreadyExistError;
+		const static string ObjectNameDoesNotExistError;
 
 		Parser(const vector<string> &text);
 		Parser(const vector<string> &text, int line, int position);
@@ -72,6 +74,8 @@ namespace prsr {
 		shared_ptr<AbstractParserNodeProperty> parseProperty();
 		shared_ptr<ParserNodeDescriptionProperty> parseDescriptionProperty();
 		shared_ptr<ParserNodeRadiusProperty> parseRadiusProperty();
+		unique_ptr<ConnectivityMatrix> parseConnectivities();
+		void parseConnectivity(ConnectivityMatrix &outConnectivityMatrix);
 		unique_ptr<AbstractParserNodeConnectivity> parseConnectivitySymbol();
 		unique_ptr<ParserNodeNormalConnectivity> parseNormalConnectivitySymbol();
 		bool isNormalConnectivitySymbol();

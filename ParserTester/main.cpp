@@ -4,6 +4,7 @@
 //#include <utility>
 //#include <memory>
 
+#include "../SODD/Include/ConnectivityMatrix.h"
 #include "../SODD/Include/Parser.h"
 #include "../SODD/Include/ParserNodeProperty.h"
 #include "../SODD/Include/ParserNodeConnectivity.h"
@@ -108,7 +109,7 @@ bool testParseObjectsExpectedClosingBraceError();
 bool testParseObjectsUnexpectedEndOfFileError1();
 bool testParseObjectsUnexpectedEndOfFileError2();
 
-//Connections test
+//Connectivity symbol test
 bool testParseNormalConnectivityOk();
 bool testParseDashedConnectivityOk();
 bool testParseNormalConnectivityExpectedGreaterSimbolError();
@@ -119,6 +120,13 @@ bool testIsNormalConnectivityOk();
 bool testIsDashedConnectivityOk();
 bool testIsNotNormalConnectivity();
 bool testIsNotDashedConnectivity();
+
+//Connectivity test
+bool testParseConnectivityOk();
+bool testParseConnectivityNameDoesNotExistError();
+
+//Connectivities test
+bool testParseConnectivitiesOk();
 
 int main() {
 	int correctTests = 0;
@@ -217,7 +225,7 @@ int main() {
 	message += CHECK_TESTING_FUNCTION(testParseObjectsUnexpectedEndOfFileError1, correctTests, incorrectTests);
 	message += CHECK_TESTING_FUNCTION(testParseObjectsUnexpectedEndOfFileError2, correctTests, incorrectTests);
 
-	//Connections test
+	//Connectivity symbol test
 	message += CHECK_TESTING_FUNCTION(testParseNormalConnectivityOk, correctTests, incorrectTests);
 	message += CHECK_TESTING_FUNCTION(testParseDashedConnectivityOk, correctTests, incorrectTests);
 	message += CHECK_TESTING_FUNCTION(testParseNormalConnectivityExpectedGreaterSimbolError, correctTests, incorrectTests);
@@ -228,6 +236,13 @@ int main() {
 	message += CHECK_TESTING_FUNCTION(testIsDashedConnectivityOk, correctTests, incorrectTests);
 	message += CHECK_TESTING_FUNCTION(testIsNotNormalConnectivity, correctTests, incorrectTests);
 	message += CHECK_TESTING_FUNCTION(testIsNotDashedConnectivity, correctTests, incorrectTests);
+
+	//Connectivity test
+	message += CHECK_TESTING_FUNCTION(testParseConnectivityOk, correctTests, incorrectTests);
+	message += CHECK_TESTING_FUNCTION(testParseConnectivityNameDoesNotExistError, correctTests, incorrectTests);
+
+	//Connectivities test
+	message += CHECK_TESTING_FUNCTION(testParseConnectivitiesOk, correctTests, incorrectTests);
 
 	cout << "Correct tests: " << correctTests << endl;
 	cout << "Incorrect tests: " << incorrectTests << endl;
@@ -1459,7 +1474,7 @@ bool testParseObjectsUnexpectedEndOfFileError2() {
 	return false;
 }
 
-//Connections test
+//Connectivity symbol test
 bool testParseNormalConnectivityOk() {
 	vector<string> strings = vector<string>();
 	unique_ptr<AbstractParserNodeConnectivity> result;
@@ -1642,4 +1657,121 @@ bool testIsNotDashedConnectivity() {
 	}
 
 	return !result;
+}
+
+//Connectivity test
+bool testParseConnectivityOk() {
+	vector<string> strings = vector<string>();
+	vector<gd::Node> objects;
+	unique_ptr<ConnectivityMatrix> connectivityMatrix;
+	strings.push_back("  ");
+	strings.push_back(" obJect ");
+	strings.push_back(" anObject ");
+	strings.push_back(" { ");
+	strings.push_back("  Radius  ");
+	strings.push_back("  :  0120.01020; ");
+	strings.push_back(" descripTion :  \"desc 1\" ");
+	strings.push_back(" ; ");
+	strings.push_back(" } object otherObject{");
+	strings.push_back("");
+	strings.push_back(" ");
+	strings.push_back("}");
+	strings.push_back("  ");
+	strings.push_back("  ");
+	strings.push_back("  AnObJect->   ");
+	strings.push_back("  ");
+	strings.push_back("  OTHERObJect;");
+
+	Parser parser = Parser(strings);
+	try {
+		objects = parser.parseObjects();
+		connectivityMatrix = unique_ptr<ConnectivityMatrix>(new ConnectivityMatrix(objects.size()));
+		parser.parseConnectivity(*connectivityMatrix);
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+
+	//should check that all other positions of the matrix are false for has connection and all are false for has dashed connection.
+	return connectivityMatrix->hasArrow(0, 1) && !connectivityMatrix->hasArrow(1, 0);
+}
+
+bool testParseConnectivityNameDoesNotExistError() {
+	vector<string> strings = vector<string>();
+	vector<gd::Node> objects;
+	unique_ptr<ConnectivityMatrix> connectivityMatrix;
+	strings.push_back("  ");
+	strings.push_back(" obJect ");
+	strings.push_back(" anObject ");
+	strings.push_back(" { ");
+	strings.push_back("  Radius  ");
+	strings.push_back("  :  0120.01020; ");
+	strings.push_back(" descripTion :  \"desc 1\" ");
+	strings.push_back(" ; ");
+	strings.push_back(" } object otherObject{");
+	strings.push_back("");
+	strings.push_back(" ");
+	strings.push_back("}");
+	strings.push_back("  ");
+	strings.push_back("  ");
+	strings.push_back("  AnObJect->   ");
+	strings.push_back("  ");
+	strings.push_back("  aaaa;");
+
+	Parser parser = Parser(strings);
+	try {
+		objects = parser.parseObjects();
+		connectivityMatrix = unique_ptr<ConnectivityMatrix>(new ConnectivityMatrix(objects.size()));
+		parser.parseConnectivity(*connectivityMatrix);
+	}
+	catch (ParserException &e) {
+		string errorMsg = string(e.what());
+		ostringstream expectedError;
+		expectedError << Parser::ObjectNameDoesNotExistError << " Line: " << 17 << ", Position: " << 3 << ".";
+
+		return errorMsg == expectedError.str();
+	}
+
+	return false;
+}
+
+//Connectivities test
+bool testParseConnectivitiesOk() {
+	vector<string> strings = vector<string>();
+	vector<gd::Node> objects;
+	unique_ptr<ConnectivityMatrix> connectivityMatrix;
+	strings.push_back("  ");
+	strings.push_back(" obJect ");
+	strings.push_back(" anObject ");
+	strings.push_back(" { ");
+	strings.push_back("  Radius  ");
+	strings.push_back("  :  0120.01020; ");
+	strings.push_back(" descripTion :  \"desc 1\" ");
+	strings.push_back(" ; ");
+	strings.push_back(" } object otherObject{");
+	strings.push_back("");
+	strings.push_back(" ");
+	strings.push_back("}");
+	strings.push_back("  ");
+	strings.push_back("  ");
+	strings.push_back("  AnObJect->   ");
+	strings.push_back("  ");
+	strings.push_back("  OTHERObJect;  otherobject");
+	strings.push_back("  =>  ");
+	strings.push_back("  AnObJect  ");
+	strings.push_back("  ");
+	strings.push_back(" ; ");
+
+	Parser parser = Parser(strings);
+	try {
+		objects = parser.parseObjects();
+		connectivityMatrix = parser.parseConnectivities();
+	}
+	catch (ParserException &e) {
+		return false;
+	}
+
+	//should check that all other positions of the matrix are false for has connection and all are false for has dashed connection.
+	return	connectivityMatrix->hasArrow(0, 1)			&& !connectivityMatrix->hasArrow(1, 0) &&
+			!connectivityMatrix->hasDashedArrow(0, 1)	&& connectivityMatrix->hasDashedArrow(1, 0);
 }

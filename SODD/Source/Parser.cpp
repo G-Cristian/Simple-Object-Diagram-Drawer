@@ -50,6 +50,7 @@ namespace prsr {
 	const string Parser::GreaterThanSymbolExpectedError = "'>' expected.";
 	const string Parser::ConnectivitySymbolExpectedError = "Connectivity symbol expected ('->' for normal connectivity or '=>' for dashed connectivity).";
 	const string Parser::ObjectNameAlreadyExistError = "Object name already exist.";
+	const string Parser::ObjectNameDoesNotExistError = "Object name does not exist.";
 
 	Parser::Parser(const vector<string> &text):Parser(text, 0, 0){
 	}
@@ -129,6 +130,39 @@ namespace prsr {
 		double radius = parseNumber();
 		parseSemicolon();
 		return make_shared<ParserNodeRadiusProperty>(radius);
+	}
+
+	unique_ptr<ConnectivityMatrix> Parser::parseConnectivities()
+	{
+		int nodeCount = _nodeIndexPerObjectName.size();
+		unique_ptr<ConnectivityMatrix> connectivityMatrix(new ConnectivityMatrix(nodeCount));
+
+		while (!skipSpacesAndNewLine()){
+			parseConnectivity(*connectivityMatrix);
+		}
+
+		return connectivityMatrix;
+	}
+
+	void Parser::parseConnectivity(ConnectivityMatrix &outConnectivityMatrix)
+	{
+		string objectName = parseObjectName();
+		map<string, int>::iterator firstObject = _nodeIndexPerObjectName.find(objectName);
+		if (firstObject == _nodeIndexPerObjectName.end()) {
+			throw ParserException(_currentLine + 1, _currentPosition - objectName.length() + 1, ObjectNameDoesNotExistError);
+		}
+		
+		unique_ptr<AbstractParserNodeConnectivity> connectivitySymbol = parseConnectivitySymbol();
+
+		objectName = parseObjectName();
+		map<string, int>::iterator secondObject = _nodeIndexPerObjectName.find(objectName);
+		if (secondObject == _nodeIndexPerObjectName.end()) {
+			throw ParserException(_currentLine + 1, _currentPosition - objectName.length() + 1, ObjectNameDoesNotExistError);
+		}
+
+		parseSemicolon();
+
+		connectivitySymbol->setConnectivityBetweenNodesInConnectivityMatrix((*firstObject).second, (*secondObject).second, outConnectivityMatrix);
 	}
 
 	unique_ptr<AbstractParserNodeConnectivity> Parser::parseConnectivitySymbol() {
@@ -255,11 +289,11 @@ namespace prsr {
 	}
 
 	string Parser::parseObjectName() {
-		char delimiters[] = { ' ', '{' };
+		char delimiters[] = { ' ', '{', '-', '=', ';' };
 		int tokenStartLine = _currentLine;
 		int tokenStartPosition = _currentPosition;
 
-		return readToken(set<char>(delimiters, delimiters + 2), tokenStartLine, tokenStartPosition);
+		return readToken(set<char>(delimiters, delimiters + 5), tokenStartLine, tokenStartPosition);
 	}
 
 	string Parser::parseString() {
