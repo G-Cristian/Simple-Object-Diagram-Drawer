@@ -66,6 +66,7 @@ namespace gd {
 	}
 
 	void GraphDrawer::drawGraph(const Graph &graph) {
+		//TODO: Recive an instance of a class used to calculate the width and height and use that instance in 'getGraphBoundingRectangle'.
 		vector<Geometry::Point2D> nodesPositions = calculateNodesPositions(graph);
 		Geometry::Rectangle boundingRectangle = getMinimumBoundingRectangle(graph, nodesPositions);
 		_renderer.resizeWindow(static_cast<int>(boundingRectangle.getWidth()),
@@ -102,6 +103,7 @@ namespace gd {
 	}
 	
 	Geometry::Rectangle GraphDrawer::getGraphBoundingRectangle(const Graph &graph) const {
+		//TODO: Use an instance of a class used to calculate the width and height here for calculating the width and height.
 		//float doubleSummatoryRadius = summatoryRadius(graph) * 2;
 		float doubleSummatoryRadius = summatoryRadius(graph)*1.5;
 		return Geometry::Rectangle(0, 0, doubleSummatoryRadius, doubleSummatoryRadius);
