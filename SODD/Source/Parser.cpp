@@ -5,6 +5,7 @@
 #include <cctype>
 #include <list>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <utility>
 #include "..\Include\Parser.h"
@@ -65,6 +66,13 @@ namespace prsr {
 
 	Parser::~Parser() {
 
+	}
+
+	gd::Graph Parser::parseGraph()
+	{
+		vector<gd::Node> nodes = parseObjects();
+		unique_ptr<ConnectivityMatrix> connectivityMatrix = parseConnectivities();
+		return gd::Graph(nodes, *connectivityMatrix);
 	}
 
 	vector<gd::Node> Parser::parseObjects()

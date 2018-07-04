@@ -67,7 +67,7 @@ namespace prsr {
 		Parser(const vector<string> &text, int line, int position);
 		~Parser();
 
-		//Graph parseGraph();
+		gd::Graph parseGraph();
 		vector<gd::Node> parseObjects();
 		pair<string, gd::Node> parseObject();
 		NodeProperties parseProperties();
