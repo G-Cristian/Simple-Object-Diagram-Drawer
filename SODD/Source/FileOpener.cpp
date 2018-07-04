@@ -7,7 +7,7 @@ FileOpener::~FileOpener() {
 
 }
 
-vector<string> FileOpener::openFile(string fileName) {
+vector<string> FileOpener::openFile(const string &fileName) {
 	_file = ifstream(fileName, ios::in);
 	if (_file.is_open()) {
 		setTextFromFile();

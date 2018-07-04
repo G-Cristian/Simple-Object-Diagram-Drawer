@@ -13,7 +13,7 @@ public:
 	FileOpener();
 	~FileOpener();
 
-	vector<string> openFile(string fileName);
+	vector<string> openFile(const string &fileName);
 
 private:
 	void setTextFromFile();
