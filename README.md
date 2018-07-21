@@ -40,7 +40,7 @@ Note: Use cmake -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_PREFIX=/usr/local .. 
 ### For building
 
 In Source foulder open terminal and run: <br />
-g++ -std=c++11 *.cpp -o <output name> `pkg-config --cflags --libs opencv`
+g++ -std=c++11 *.cpp -o 'output name' `pkg-config --cflags --libs opencv`
 
 Example <br />
 g++ -std=c++11 *.cpp -o main `pkg-config --cflags --libs opencv`
