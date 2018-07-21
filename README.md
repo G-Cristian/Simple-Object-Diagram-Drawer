@@ -60,7 +60,7 @@ and try building again.
 
 In order to run the program you have write the following in the terminal
 
-<program name> inputFileName:<name of txt file> outputFileName:<name of output image with extention> [width:<width as integer>] [height:<height as integer>]
+'program name' inputFileName:'name of txt file' outputFileName:'name of output image with extention' [width:'width as integer'] [height:'height as integer']
 
 The width and height are optionals and their order can be interchanged.
 
