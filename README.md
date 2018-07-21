@@ -22,3 +22,47 @@ Note that, because of the OpenCV version I have, when adding the additional depe
 ## Ubuntu
 
 ### Information for installation and configuration
+
+Guide from http://docs.opencv.org/2.4/doc/tutorials/introduction/linux_install/linux_install.html
+
+sudo apt-get install build-essential
+sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+git clone https://github.com/opencv/opencv.git
+cd opencv
+mkdir release
+cd release
+cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..
+make
+sudo make install
+
+Note: Use cmake -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_PREFIX=/usr/local .. , without spaces after -D if 'cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..' do not work.
+
+### For building
+
+In Source foulder open terminal and run:
+g++ -std=c++11 *.cpp -o <output name> `pkg-config --cflags --libs opencv`
+
+Example
+g++ -std=c++11 *.cpp -o main `pkg-config --cflags --libs opencv`
+
+If when running the program it throws an error similar to the following
+
+'./main: error while loading shared libraries: libopencv_imgcodecs.so.3.3: cannot open shared object file: No such file or directory'
+
+run the following on the terminal
+
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib
+sudo ldconfig
+
+and try building again.
+
+## Running the program
+
+In order to run the program you have write the following in the terminal
+
+<program name> inputFileName:<name of txt file> outputFileName:<name of output image with extention> [width:<width as integer>] [height:<height as integer>]
+
+The width and height are optionals and their order can be interchanged.
+
+Example (on windows)
+SODD.exe inputFileName:Tests\test1.txt outputFileName:Tests\test1.jpg
