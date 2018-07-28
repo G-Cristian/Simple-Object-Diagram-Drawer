@@ -3,6 +3,16 @@ A simple object diagram drawer usefull for the course "Software Engineering" at 
 
 The app makes use of OpenCV.
 
+## Table of content
+* Windows 10
+  * Information for installation and configuration.
+* Ubuntu
+  * Information for installation and configuration
+  * For building
+* Running the program
+* Syntax of the language
+* Known issues
+
 ## Windows 10
 
 Tested on Visual Studio 2015.
@@ -39,11 +49,11 @@ Note: Use cmake -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_PREFIX=/usr/local .. 
 
 ### For building
 
-In Source foulder open terminal and run: <br />
-g++ -std=c++11 *.cpp -o 'output name' `pkg-config --cflags --libs opencv`
+In Source folder open terminal and run: <br />
+g++ -std=c++11 *.cpp -o 'output name' \`pkg-config --cflags --libs opencv\`
 
 Example <br />
-g++ -std=c++11 *.cpp -o main `pkg-config --cflags --libs opencv`
+g++ -std=c++11 *.cpp -o main \`pkg-config --cflags --libs opencv\`
 
 If when running the program it throws an error similar to the following
 
@@ -58,11 +68,46 @@ and try building again.
 
 ## Running the program
 
-In order to run the program you have write the following in the terminal
+In order to run the program you have to write the following in the terminal
 
-'program name' inputFileName:'name of txt file' outputFileName:'name of output image with extention' [width:'width as integer'] [height:'height as integer']
+'program name' inputFileName:'name of txt file' outputFileName:'name of output image with extention' \<width:'width as integer'\> \<height:'height as integer'\>
 
-The width and height are optionals and their order can be interchanged.
+The width and height are optionals and their order can be interchanged. Note that these values are hints for the application and the actual size of the image may be smaller. These hints are usefull if your diagram has few objects. We will see an example when explaining the syntax of the language.
 
 Example (on windows) <br />
 SODD.exe inputFileName:Tests\test1.txt outputFileName:Tests\test1.jpg <br />
+
+## Syntax of the language
+
+First you must add the objects. These can have two properties: a description and a radius. Then you add the connections between them. There are two kinds of connections: arrows with dashed lines and arrows without solid lines.
+
+Let's see an axample of a simple diagram.
+
+```
+object anObject{
+ radius:10.5;
+ description:"Hi\n there";
+}
+
+object anotherObject{
+ radius:30.5;
+ description:"bye\n here \n and there";
+}
+
+anObject->anotherObject;
+anObject=>anotherObject;
+anotherObject->anObject;
+```
+
+This is [test1.txt](Tests\test1.txt) and generated the image [test1AutoWidthAutoHeight.jpg](Tests\test1AutoWidthAutoHeight.jpg), if not setting the width nor height, and the image [test1ManualWidthManualHeight.jpg](Tests\test1ManualWidthManualHeight.jpg), when setting both width and height. Note how in this case you get better results by giving a hint for the desired size.
+
+The 'object' word is a reserved word and mean the start of an object declaration. Then you must specify an object name, in this case 'anObject'. After that you must insert the properties between '{' and '}'. The allowed properties are 'radius' and 'description'. See that next to the property name you must write a ':' and then the property value, which is a numeric value, float or int, for radius and a string between '"' for the description. Note that at the end of eah property you must write a ';'. You can add as many object as you want. When you are finished you can add the connections between them. This is done by specifying the object name followed be '-\>' for a solid arrow or '=\>' for a dashed arrow and the name of the other object, ending with a ';'.
+
+Some things to keep in mind are that everything, exept for the description, is not case sensitive, so OBJECT is the same as object, anObject is the same as ANOBJECT, etc.
+
+Another thins is that the object names must be unique.
+
+There are some examples in the [Tests](Tests) folder.
+
+## Known issues
+Errors when parsing the file if using tabs instead of spaces.
