@@ -99,7 +99,7 @@ anObject=>anotherObject;
 anotherObject->anObject;
 ```
 
-This is [test1.txt](Tests\test1.txt) and generated the image [test1AutoWidthAutoHeight.jpg](Tests\test1AutoWidthAutoHeight.jpg), if not setting the width nor height, and the image [test1ManualWidthManualHeight.jpg](Tests\test1ManualWidthManualHeight.jpg), when setting both width and height. Note how in this case you get better results by giving a hint for the desired size.
+This is [test1.txt](SODD/x64/Release/Tests\test1.txt) and generated the image [test1AutoWidthAutoHeight.jpg](SODD/x64/Release/Tests\test1AutoWidthAutoHeight.jpg), if not setting the width nor height, and the image [test1ManualWidthManualHeight.jpg](SODD/x64/Release/Tests\test1ManualWidthManualHeight.jpg), when setting both width and height. Note how in this case you get better results by giving a hint for the desired size.
 
 The 'object' word is a reserved word and mean the start of an object declaration. Then you must specify an object name, in this case 'anObject'. After that you must insert the properties between '{' and '}'. The allowed properties are 'radius' and 'description'. See that next to the property name you must write a ':' and then the property value, which is a numeric value, float or int, for radius and a string between '"' for the description. Note that at the end of eah property you must write a ';'. You can add as many object as you want. When you are finished you can add the connections between them. This is done by specifying the object name followed be '-\>' for a solid arrow or '=\>' for a dashed arrow and the name of the other object, ending with a ';'.
 
@@ -107,7 +107,7 @@ Some things to keep in mind are that everything, exept for the description, is n
 
 Another thins is that the object names must be unique.
 
-There are some examples in the [Tests](Tests) folder.
+There are some examples in the [Tests](SODD/x64/Release/Tests) folder.
 
 ## Known issues
 * Errors when parsing the file if using tabs instead of spaces.
