@@ -1,0 +1,13 @@
+object anObject{
+ radius:10.5;
+ description:"Hi\n there";
+}
+
+object anotherObject{
+ radius:30.5;
+ description:"bye\n here \n and there";
+}
+
+anObject->anotherObject;
+anObject=>anotherObject;
+anotherObject->anObject;
