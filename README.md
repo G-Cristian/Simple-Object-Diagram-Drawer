@@ -110,4 +110,6 @@ Another thins is that the object names must be unique.
 There are some examples in the [Tests](Tests) folder.
 
 ## Known issues
-Errors when parsing the file if using tabs instead of spaces.
+* Errors when parsing the file if using tabs instead of spaces.
+* Can't use " character in object descriptions. (Should add support for escape characters like \\").
+* Doesn't support connection to same object. Example, anObject->anObject.
