@@ -1,6 +1,7 @@
+#include "../Include/BoundingRectangleGetters.h"
+#include "../Include/Circle.h"
 #include "../Include/graphdrawer.h"
 #include "../Include/Line.h"
-#include "../Include/Circle.h"
 
 //#include <stdio.h>
 //#include <stdlib.h>
@@ -65,9 +66,9 @@ namespace gd {
 
 	}
 
-	void GraphDrawer::drawGraph(const Graph &graph) {
+	void GraphDrawer::drawGraph(const Graph &graph, shared_ptr<AbstractBoundingRectangleGetter> boundingRectangleGetter) {
 		//TODO: Recive an instance of a class used to calculate the width and height and use that instance in 'getGraphBoundingRectangle'.
-		vector<Geometry::Point2D> nodesPositions = calculateNodesPositions(graph);
+		vector<Geometry::Point2D> nodesPositions = calculateNodesPositions(graph, boundingRectangleGetter);
 		Geometry::Rectangle boundingRectangle = getMinimumBoundingRectangle(graph, nodesPositions);
 		_renderer.resizeWindow(static_cast<int>(boundingRectangle.getWidth()),
 								static_cast<int>(boundingRectangle.getHeight()));
@@ -76,9 +77,9 @@ namespace gd {
 		actuallyDrawGraph(graph, nodesPositions);
 	}
 
-	vector<Geometry::Point2D> GraphDrawer::calculateNodesPositions(const Graph &graph) const {
+	vector<Geometry::Point2D> GraphDrawer::calculateNodesPositions(const Graph &graph, const shared_ptr<AbstractBoundingRectangleGetter> &boundingRectangleGetter) const {
 		//get bounding rectangle
-		Geometry::Rectangle boundingRectangle = getGraphBoundingRectangle(graph);
+		Geometry::Rectangle boundingRectangle = boundingRectangleGetter->getRectangle();
 		//position nodes
 		vector<Geometry::Point2D> positions = nodesPositionsInsideRectangle(graph, boundingRectangle);
 		/*
@@ -101,25 +102,7 @@ namespace gd {
 		*/
 		return positions;
 	}
-	
-	Geometry::Rectangle GraphDrawer::getGraphBoundingRectangle(const Graph &graph) const {
-		//TODO: Use an instance of a class used to calculate the width and height here for calculating the width and height.
-		//float doubleSummatoryRadius = summatoryRadius(graph) * 2;
-		float doubleSummatoryRadius = summatoryRadius(graph)*1.5;
-		return Geometry::Rectangle(0, 0, doubleSummatoryRadius, doubleSummatoryRadius);
-	}
-	
-	float GraphDrawer::summatoryRadius(const Graph &graph) const {
-		const vector<Node> &nodes = graph.getNodes();
-		size_t n = nodes.size();
-		float sum = 0;
-		for (int i = 0; i < n; ++i) {
-			sum += nodes[i].getRadius();
-		}
 
-		return sum;
-	}
-	
 	vector<Geometry::Point2D> GraphDrawer::nodesPositionsInsideRectangle(const Graph &graph, const Geometry::Rectangle &rectangle)const {
 		const vector<Node> &nodes = graph.getNodes();
 		size_t nodesCount = nodes.size();

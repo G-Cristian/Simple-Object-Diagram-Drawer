@@ -6,19 +6,23 @@
 #include <memory>
 #include <string>
 #include <utility>
-#include "..\Include\appInputParserStrategy.h"
+#include "../Include/appInputParserStrategy.h"
 
 using namespace std;
 
 namespace aip {
 	class AbstractAppInputParserStrategy;
+	class gd::AbstractBoundingRectangleGetter;
+	class gd::Graph;
 
 	struct Parameters {
 		string _appName;
 		string _inputFileName;
 		string _outputFileName;
-		int _with;
+		int _width;
 		int _height;
+
+		shared_ptr<gd::AbstractBoundingRectangleGetter> getBoundingRectangleGetter(const gd::Graph& graph) const;
 	};
 
 	class AppInputParserExeption :public exception {

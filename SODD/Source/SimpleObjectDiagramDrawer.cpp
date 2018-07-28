@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 				_Create instance of these according to parameters._width and parameters._height (maybe use factory)
 				_pass this to graphDrawer.
 		***********************/
-		graphDrawer.drawGraph(graph);
+		graphDrawer.drawGraph(graph, parameters.getBoundingRectangleGetter(graph));
 
 		renderer.show(0, 0);
 		renderer.exportToImage(parameters._outputFileName);

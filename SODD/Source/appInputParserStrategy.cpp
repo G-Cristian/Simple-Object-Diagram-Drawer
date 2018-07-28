@@ -29,7 +29,7 @@ namespace aip {
 		using namespace prsr;
 		Parser parser(vector<string>(1, parameter));
 		try {
-			outParameters._with = static_cast<int>(parser.parseNumber());
+			outParameters._width = static_cast<int>(parser.parseNumber());
 		}
 		catch (ParserException &e) {
 			throw AppInputParserExeption("Not a number for width.");

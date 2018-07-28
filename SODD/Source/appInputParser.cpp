@@ -3,11 +3,31 @@
 #include <sstream>
 #include <string>
 #include <utility>
-#include "..\Include\appInputParser.h"
+#include "../Include/appInputParser.h"
+#include "../Include/BoundingRectangleGetters.h"
+#include "../Include/graphdrawer.h"
 
 using namespace std;
 
 namespace aip {
+
+	/*********************Parameters******************/
+	/*******methods*******/
+	shared_ptr<gd::AbstractBoundingRectangleGetter> Parameters::getBoundingRectangleGetter(const gd::Graph& graph) const {
+		if (_height <= 0 && _width <= 0) {
+			return shared_ptr<gd::AbstractBoundingRectangleGetter>(new gd::AutomaticWidthAndHeightBoundingRectangleGetter(graph));
+		}
+		else if (_width <= 0) {
+			return shared_ptr<gd::AbstractBoundingRectangleGetter>(new gd::AutomaticWidthManualHeightBoundingRectangleGetter(graph, _height));
+		}
+		else if (_height <= 0) {
+			return shared_ptr<gd::AbstractBoundingRectangleGetter>(new gd::ManualWidthAutomaticHeightBoundingRectangleGetter(graph, _width));
+		}
+		else {
+			return shared_ptr<gd::AbstractBoundingRectangleGetter>(new gd::ManualWidthAndHeightBoundingRectangleGetter(_width, _height));
+		}
+	}
+
 	/*********************AppInputParserExeption******************/
 	/************consts*********/
 	const string AppInputParserExeption::DefaultMessage = "Usage: inputFileName:string.txt outputFileName:string.jpg <width:int> <height:int>";

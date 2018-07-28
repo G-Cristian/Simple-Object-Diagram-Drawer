@@ -1,20 +1,23 @@
 #ifndef _GRAPHDRAWER_H_
 #define _GRAPHDRAWER_H_
 
-#include <string>
-#include <vector>
 #include <list>
+#include <memory>
+#include <string>
 #include <utility>
-#include "renderer.h"
-#include "Point2D.h"
-#include "Line.h"
-#include "Rectangle.h"
-#include "ConnectivityMatrix.h"
+#include <vector>
 #include "ConnectionDrawingAlgorithms.h"
+#include "ConnectivityMatrix.h"
+#include "Line.h"
+#include "Point2D.h"
+#include "Rectangle.h"
+#include "renderer.h"
 
 using namespace std;
 
 namespace gd {
+	class AbstractBoundingRectangleGetter;
+
 	class Node {
 	public:
 		Node(float radius);
@@ -50,12 +53,10 @@ namespace gd {
 		GraphDrawer(Renderer &rendererToDrawTo);
 		~GraphDrawer();
 
-		void drawGraph(const Graph &graph);
+		void drawGraph(const Graph &graph, shared_ptr<AbstractBoundingRectangleGetter> boundingRectangleGetter);
 
 	private:
-		vector<Geometry::Point2D> calculateNodesPositions(const Graph &graph) const;
-		Geometry::Rectangle getGraphBoundingRectangle(const Graph &graph) const;
-		float summatoryRadius(const Graph &graph) const;
+		vector<Geometry::Point2D> calculateNodesPositions(const Graph &graph, const shared_ptr<AbstractBoundingRectangleGetter> &boundingRectangleGetter) const;
 		vector<Geometry::Point2D> nodesPositionsInsideRectangle(const Graph &graph, const Geometry::Rectangle &rectangle)const;
 		vector<Geometry::Point2D> randomPositionsInsideRectangle(const Graph &graph, const Geometry::Rectangle &rectangle)const;
 		void calculateDisplacements(const Graph &graph, const vector<Geometry::Point2D> &positions, const Geometry::Rectangle &boundingRectangle, vector<Geometry::Point2D> &outDisplacements)const;
