@@ -52,9 +52,6 @@ private:
 	Geometry::Rectangle getBoundingRectangle(const vector<string> &lines, double boundingOffsetPerLine) const;
 	//'boundingOffset' will be scaled by 'scale'.
 	Geometry::Rectangle getBoundingRectangleUntilBaseOfWords(const string &singleLine, double boundingOffset, double scale) const;
-	//TODO: remove if not used.
-	//'boundingOffset' will be scaled by 'scale'.
-	//Geometry::Rectangle getBoundingRectangleIncludingDescender(const string &singleLine, double boundingOffset, double scale) const;
 	//'boundingOffsetPerLine' will be scaled.
 	void drawTextToRectangle(const vector<string> &lines, const Geometry::Rectangle &rect, double boundingOffsetPerLine);
 	//'boundingOffset' will be scaled by 'scale'.

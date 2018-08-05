@@ -3,10 +3,6 @@
 #include "../Include/graphdrawer.h"
 #include "../Include/Line.h"
 
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <time.h>
-
 #include <iostream>
 #include <random>
 
@@ -82,24 +78,7 @@ namespace gd {
 		Geometry::Rectangle boundingRectangle = boundingRectangleGetter->getRectangle();
 		//position nodes
 		vector<Geometry::Point2D> positions = nodesPositionsInsideRectangle(graph, boundingRectangle);
-		/*
-		//TODO: replace following code with the algorithm to draw the graph
-		//This is just for testing
-		vector<Geometry::Point2D> positions = vector<Geometry::Point2D>();
-		const vector<Node> nodes = graph.getNodes();
-		positions.reserve(nodes.size());
 
-		//TODO: replace following code with the algorithm to draw the graph
-		//This is just for testing
-		for (vector<Node>::const_iterator it = nodes.begin(); it != nodes.end(); it++) {
-			positions.push_back(Geometry::Point2D(rand() % 600, rand() % 600));
-		}
-		positions[0] = Geometry::Point2D(50,50);
-		positions[1] = Geometry::Point2D(200, 100);
-		positions[2] = Geometry::Point2D(100, 200);
-		positions[3] = Geometry::Point2D(450, 450);
-		
-		*/
 		return positions;
 	}
 
@@ -129,17 +108,13 @@ namespace gd {
 		int rectangleWidth = static_cast<int>(rectangle.getWidth());
 		int rectangleHeight = static_cast<int>(rectangle.getHeight());
 
-		//srand(time(NULL));
 		std::random_device rd;
 		std::default_random_engine generator(rd());
 		std::uniform_int_distribution<int> distributionForWidth(0, rectangleWidth);
 		std::uniform_int_distribution<int> distributionForHeight(0, rectangleHeight);
 		for (int i = 0; i < nodesCount; ++i) {
-			//positions.push_back(Geometry::Point2D(rand() % rectangleWidth, rand() % rectangleHeight));
 			int a = distributionForWidth(generator);
 			int b = distributionForHeight(generator);
-			cout << "node " << i << endl;
-			cout << "distributionForWidth: " << a << "; distributionForHeight: " << b << endl;
 			positions.push_back(Geometry::Point2D(a, b));
 		}
 
@@ -160,12 +135,8 @@ namespace gd {
 			for (int j = i + 1; j < nodesCount; ++j) {
 				Circle circleNode1 = Circle(positions[i], nodes[i].getRadius());
 				Circle circleNode2 = Circle(positions[j], nodes[j].getRadius());
-				//Circle circleNode1 = Circle(Point2D(-9.84,-1.73), 10);
-				//Circle circleNode2 = Circle(Point2D(14.72,2.60), 5);
-				//double distance = circleNode1.distanceFromCircumferenceToOtherCircumference(circleNode2);
 				double distance = circleNode1.distanceFromCenterToOtherCenter(circleNode2);
 				if (distance != 0) {
-					//Geometry::Point2D distanceVector = circleNode1.distanceVectorFromCircumferenceToOtherCircumference(circleNode2);
 					Geometry::Point2D distanceVector = positions[j] - positions[i];
 					Geometry::Point2D realDisplacement = (distanceVector / distance) * (k*k / distance);
 					outDisplacements[i] = outDisplacements[i] - realDisplacement;
@@ -186,10 +157,8 @@ namespace gd {
 				Circle circleNode1 = Circle(positions[i], nodes[i].getRadius());
 				Circle circleNode2 = Circle(positions[*it], nodes[*it].getRadius());
 				double distance = circleNode1.distanceFromCircumferenceToOtherCircumference(circleNode2);
-				//double distance = circleNode1.distanceFromCenterToOtherCenter(circleNode2);
 				if (distance > 0) {
 					Geometry::Point2D distanceVector = circleNode1.distanceVectorFromCircumferenceToOtherCircumference(circleNode2);
-					//Geometry::Point2D distanceVector = positions[*it] - positions[i];
 					Geometry::Point2D realDisplacement = (distanceVector / distance) * (distance*distance / k);
 
 					outDisplacements[i] = outDisplacements[i] + realDisplacement;
@@ -201,11 +170,6 @@ namespace gd {
 	void GraphDrawer::moveVertices(const vector<Geometry::Point2D> &displacements, const Geometry::Rectangle &boundingRectangle, vector<Geometry::Point2D> &outPositions) const {
 		size_t n = displacements.size();
 		for (int i = 0; i < n; ++i) {
-			//outPositions[i] = outPositions[i] + 0.1*(displacements[i] / sqrt(displacements[i].x*displacements[i].x + displacements[i].y*displacements[i].y));
-			//outPositions[i].x = min(boundingRectangle.getWidth(), max(0.0, outPositions[i].x));
-			//outPositions[i].y = min(boundingRectangle.getHeight(), max(0.0, outPositions[i].y));
-			
-			//outPositions[i] = outPositions[i] + 0.1*displacements[i];
 			outPositions[i].x = min(boundingRectangle.getWidth(), max(0.0, outPositions[i].x + 0.1*displacements[i].x));
 			outPositions[i].y = min(boundingRectangle.getHeight(), max(0.0, outPositions[i].y + 0.1*displacements[i].y));
 		}
@@ -266,7 +230,6 @@ namespace gd {
 		
 
 		for (int currentNode = 0; currentNode < n; ++currentNode) {
-			cout << "current " << currentNode << endl;
 			const list<int> currentAdjacencyList = edges[currentNode];
 			for (list<int>::const_iterator it = currentAdjacencyList.begin(); it != currentAdjacencyList.end(); it++) {
 				int otherNode = *it;
@@ -275,9 +238,7 @@ namespace gd {
 					list<ConnectionDrawingAlgorithm*> connectionDrawingAlgorithms = connectivityMatrix.getConnectionAlgorithmsBetweenNodes(currentNode, otherNode);
 					drawConnectivity(nodes[currentNode], positions[currentNode], nodes[otherNode], positions[otherNode], connectionDrawingAlgorithms);
 				}
-				cout << "other " << otherNode << "; ";
 			}
-			cout << endl;
 			alreadyChecked[currentNode] = true;
 		}
 	}

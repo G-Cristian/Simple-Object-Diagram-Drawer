@@ -28,11 +28,6 @@ int main(int argc, char *argv[]) {
 		Renderer renderer = Renderer(window);
 
 		gd::GraphDrawer graphDrawer(renderer);
-		/***********************
-		TODO:	_Create strategy for calculating the width and height (abstract, concrete manual width and height, concrete auto width, concrete auto height, concrete auto width and heigth)
-				_Create instance of these according to parameters._width and parameters._height (maybe use factory)
-				_pass this to graphDrawer.
-		***********************/
 		graphDrawer.drawGraph(graph, parameters.getBoundingRectangleGetter(graph));
 
 		renderer.show(0, 0);
