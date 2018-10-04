@@ -17,6 +17,8 @@ The app makes use of OpenCV.
 
 Tested on Visual Studio 2015.
 
+IMPORTANT: Tested in Release mode, x64 (Found linking issues with OPENCV when compiling if I didn't use x64).
+
 ### Information for installation and configuration.
 
 http://docs.opencv.org/3.0-beta/doc/tutorials/introduction/windows_install/windows_install.html
